@@ -1,36 +1,66 @@
-import serial
-import matplotlib.pyplot as plt
+import websocket
+import threading
 from collections import deque
 
-# PORT ESP32
-ser = serial.Serial('/dev/ttyACM0', 115200)
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtWidgets
 
-# buffer ECG
-data = deque([0]*500, maxlen=500)
+# ================= BUFFER ECG =================
+buffer = deque([0]*500, maxlen=500)
 
-plt.ion()
-fig, ax = plt.subplots()
-line, = ax.plot(data)
+# ================= GUI =================
+app = QtWidgets.QApplication([])
 
-ax.set_ylim(0, 4095)
-ax.set_title("ECG Real Time")
-ax.set_xlabel("Samples")
-ax.set_ylabel("Amplitude")
+win = pg.GraphicsLayoutWidget(show=True)
+win.setWindowTitle("ECG Real-Time WebSocket")
 
-while True:
+plot = win.addPlot(title="ECG Signal")
+curve = plot.plot()
+
+plot.setYRange(0, 4095)
+
+def update_plot():
+    curve.setData(list(buffer))
+
+timer = pg.QtCore.QTimer()
+timer.timeout.connect(update_plot)
+timer.start(20)
+
+# ================= WEBSOCKET =================
+ESP32_IP = "ws://10.42.0.71/ws"  # ⚠️ change IP
+
+def on_message(ws, message):
     try:
-        line_raw = ser.readline().decode().strip()
+        # message format: "ECG:123,124,125,..."
+        if message.startswith("ECG:"):
+            data = message[4:].split(",")
 
-        # garder seulement valeurs numériques
-        if line_raw.isdigit():
-            val = int(line_raw)
+            for v in data:
+                if v.isdigit():
+                    buffer.append(int(v))
 
-            data.append(val)
+    except Exception as e:
+        print("Error:", e)
 
-            line.set_ydata(data)
-            line.set_xdata(range(len(data)))
+def on_open(ws):
+    print("Connected to ESP32")
 
-            plt.pause(0.001)
+def on_error(ws, error):
+    print("WebSocket error:", error)
 
-    except:
-        pass
+def on_close(ws, close_status_code, close_msg):
+    print("Connection closed")
+
+ws = websocket.WebSocketApp(
+    ESP32_IP,
+    on_message=on_message,
+    on_open=on_open,
+    on_error=on_error,
+    on_close=on_close
+)
+
+# run websocket in background thread
+threading.Thread(target=ws.run_forever, daemon=True).start()
+
+# ================= START GUI =================
+app.exec()
