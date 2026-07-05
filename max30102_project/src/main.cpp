@@ -5,8 +5,8 @@
 // =============================================
 //  WIFI
 // =============================================
-const char* WIFI_SSID     = "MON_CODE";
-const char* WIFI_PASSWORD = "12345678";
+const char* WIFI_SSID     = "Amine";
+const char* WIFI_PASSWORD = "22222222";
 
 // =============================================
 //  PINS & CONSTANTES
