@@ -15,11 +15,11 @@ const char* WIFI_PASSWORD = "22222222";
 #define LO_PLUS         26
 #define LO_MINUS        27
 
-#define ECG_SAMPLE_RATE     250
-#define ECG_BUFFER_SIZE     250
-#define SAMPLE_PERIOD_MS    4
+#define ECG_SAMPLE_RATE     250 // Le capteur est lu 250 fois par seconde.
+#define ECG_BUFFER_SIZE     250 // capacite de buffer pour 1 seconde de data (250 echantillons)
+#define SAMPLE_PERIOD_MS    4 // 1000 ms / 250 Hz(toutes les 4 ms on lit un echantillon ECG)
 
-#define JSON_BUF_SIZE       4096
+#define JSON_BUF_SIZE       4096 // taille du buffer pour la trame JSON complete (1 seconde de data + autres infos)
 
 // =============================================
 //  SERVEUR WEB + WEBSOCKET
@@ -30,15 +30,17 @@ AsyncWebSocket ws("/ws");
 // =============================================
 //  VARIABLES GLOBALES
 // =============================================
-uint16_t ecgBuffer[ECG_BUFFER_SIZE];
+uint16_t ecgBuffer[ECG_BUFFER_SIZE]; //Mémoire contenant 1 seconde de signal ECG.
 uint16_t sampleIndex = 0;
 unsigned long lastSampleTime = 0;
 unsigned long packetCounter = 0;
 
-static char jsonBuf[JSON_BUF_SIZE];
+static char jsonBuf[JSON_BUF_SIZE]; //char 1o * 4096 =4096 o /1s==> 4ko/s
 
 // buffer pour grouper les échantillons ECG avant envoi
 // (évite d'envoyer une trame WS à chaque échantillon = 250 trames/s)
+// avec chunk de 10 échantillons, on envoie 25 trames/s, ce qui est plus raisonnable
+
 #define ECG_CHUNK_SIZE 10
 uint16_t ecgChunk[ECG_CHUNK_SIZE];
 uint8_t ecgChunkIndex = 0;
@@ -90,21 +92,26 @@ uint16_t readECG() {
 //  Format : ECG:v1,v2,v3,...,v10
 // =============================================
 void sendECGChunk() {
-    if (ws.count() == 0) return; // personne connecté, on n'envoie pas pour rien
-
-    char buf[128];
-    int pos = 0;
-    pos += snprintf(buf + pos, sizeof(buf) - pos, "ECG:");
+    if (ws.count() == 0) return; // rien de personne connecté, on n'envoie pas pour rien
+    //construit le message à envoyer
+    char buf[128];//128 octets de mémoire.
+    int pos = 0; // position actuelle dans le buffer
+    pos += snprintf(buf + pos, sizeof(buf) - pos, "ECG:");// préfixe pour indiquer que c'est du flux ECG
     for (int i = 0; i < ECG_CHUNK_SIZE; i++) {
         pos += snprintf(buf + pos, sizeof(buf) - pos, "%u%s",
                          ecgChunk[i], (i < ECG_CHUNK_SIZE - 1) ? "," : "");
     }
     ws.textAll(buf, pos);
+    //pos : a la fin de constrction , le buffer de 128 o n'est pas entierment remple 
+    //don pos contienr le nombre exact de carateres a ecrit(1o) ==> envoie pos octets
 }
+
 
 // =============================================
 //  GESTION DU BUFFER (1 seconde de data)
 // =============================================
+
+
 void storeSample(uint16_t value) {
     ecgBuffer[sampleIndex] = value;
     sampleIndex++;
@@ -125,7 +132,8 @@ void sendJSONPacket() {
     if (ws.count() == 0) return;
 
     int pos = 0;
-    bool leadOff = (digitalRead(LO_PLUS) || digitalRead(LO_MINUS));
+    bool leadOff = (digitalRead(LO_PLUS) || digitalRead(LO_MINUS)); 
+    //verifie que le kit est monter 
 
     pos += snprintf(jsonBuf + pos, JSON_BUF_SIZE - pos,
         "JSON:{\"packet_version\":\"1.0\",\"packet\":%lu,\"timestamp_ms\":%lu,",
@@ -139,6 +147,7 @@ void sendJSONPacket() {
         pos += snprintf(jsonBuf + pos, JSON_BUF_SIZE - pos, "%u%s",
                          ecgBuffer[i], (i < ECG_BUFFER_SIZE - 1) ? "," : "");
     }
+
     pos += snprintf(jsonBuf + pos, JSON_BUF_SIZE - pos, "]},");
 
     // PPG simulé
@@ -201,7 +210,7 @@ void setup() {
     pinMode(LO_MINUS, INPUT);
 
     analogReadResolution(12);
-    randomSeed(analogRead(35));
+    randomSeed(analogRead(35)); //pour gerer nombre aleatoire utilse le bruit electique(Cette instruction initialise le générateur pseudo-aléatoire.a chq restart ) 
 
     // --- Connexion WiFi ---
     WiFi.mode(WIFI_STA);
@@ -209,7 +218,8 @@ void setup() {
     Serial.print("Connexion WiFi");
     while (WiFi.status() != WL_CONNECTED) {
         delay(300);
-        Serial.print(".");
+        Serial.print("*");
+
     }
     Serial.println();
     Serial.print("Connecte ! IP : ");
@@ -217,7 +227,7 @@ void setup() {
 
     // --- WebSocket ---
     ws.onEvent(onWsEvent);
-    server.addHandler(&ws);
+    server.addHandler(&ws);//Ajout du WebSocket au serveur HTTP
 
     // route de test optionnelle
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {

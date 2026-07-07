@@ -13,7 +13,6 @@ from pyqtgraph.Qt import QtWidgets, QtCore
 ESP32_IP       = "ws://10.42.0.71/ws"   # ⚠️  Remplacer par l'IP réelle de l'ESP32
 OUTPUT_FILE    = "hpis_session.txt"
 BUFFER_DISPLAY = 500                     # points affichés dans l'oscilloscope
-
 # ================= BUFFER ECG (affichage) =================
 ecg_buffer = deque([0] * BUFFER_DISPLAY, maxlen=BUFFER_DISPLAY)
 

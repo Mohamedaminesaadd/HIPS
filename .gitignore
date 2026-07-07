@@ -3,6 +3,41 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
-.venvB
-.hpis_session.txt
 
+
+# Fichiers objet
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+
+# Exécutables
+*.exe
+
+# Bibliothèques
+*.a
+
+# Variables d'environnement
+.env
+/.venv/
+/.env/
+/.ENV/
+/.venv*/
+/venv/
+/venv*/
+venvB/
+.venvB/
+env/
+ENV/
+
+# Donnees locales
+/datasets/
+
+# Bases de donnees locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
