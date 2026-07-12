@@ -1,0 +1,48 @@
+:host {
+  display: block;
+}
+
+.login-page {
+  /* ---- Thème HPIS (les variables cascadent vers les composants enfants) ---- */
+  --hpis-bg: #0b1120;
+  --hpis-surface: #131c2e;
+  --hpis-border: #26324a;
+  --hpis-text: #e6edf7;
+  --hpis-muted: #93a1b8;
+  --hpis-teal: #2dd4bf;
+  --hpis-teal-soft: rgba(45, 212, 191, 0.1);
+  --hpis-blue: #3b82f6;
+  --hpis-blue-strong: #2563eb;
+  --hpis-danger: #f87171;
+  --hpis-radius: 12px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  background: var(--hpis-bg);
+  color: var(--hpis-text);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  &__brand {
+    position: relative;
+    border-right: 1px solid var(--hpis-border);
+    overflow: hidden;
+  }
+
+  &__form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-page__brand {
+    display: none;
+  }
+}

@@ -1,0 +1,196 @@
+:host{
+    display:block;
+    height:100%;
+}
+
+.brand{
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+
+    min-height:100vh;
+
+    padding:48px;
+
+    overflow:hidden;
+
+    color:var(--hpis-text);
+
+    background:
+        radial-gradient(circle at top left,
+        rgba(45,212,191,.12),
+        transparent 40%),
+
+        linear-gradient(
+            135deg,
+            #08111f 0%,
+            #0c1729 50%,
+            #102238 100%
+        );
+}
+
+/* halo lumineux */
+
+.brand::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:550px;
+    height:550px;
+
+    left:-180px;
+    top:-180px;
+
+    border-radius:50%;
+
+    background:rgba(45,212,191,.08);
+
+    filter:blur(90px);
+
+    pointer-events:none;
+}
+
+/* ---------------- Logo ---------------- */
+
+.brand__logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    z-index:2;
+}
+
+.brand__mark{
+
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(45,212,191,.08);
+    border:1px solid rgba(45,212,191,.15);
+    color:#2dd4bf;
+}
+
+.brand__mark svg{
+
+    width:42px;
+    height:42px;
+}
+
+.brand__logo-text{
+
+    display:flex;
+    flex-direction:column;
+}
+
+.brand__logo-title{
+
+    font-size:1.4rem;
+
+    font-weight:700;
+
+    color:white;
+}
+
+.brand__logo-subtitle{
+
+    margin-top:4px;
+
+    font-size:.82rem;
+
+    color:#9fb3c8;
+}
+
+/* ---------------- Contenu ---------------- */
+
+.brand__content{
+
+    flex:1;
+    height: 100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:42px;
+    position:relative;
+    z-index:2;
+}
+
+.brand__headline{
+
+    margin:0;
+    font-size:clamp(2.5rem,4vw,4rem);
+    line-height:1.05;
+    font-weight:700;
+    letter-spacing:-2px;
+    color:white;
+    padding-top: 30px;
+}
+
+.brand__intro{
+    margin-top:24px;
+    max-width:520px;
+    font-size:1rem;
+    line-height:1.8;
+    color:#9fb3c8;
+}
+
+/* ---------------- ECG ---------------- */
+.brand__ecg{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:120px;
+    color:#2dd4bf;
+    opacity:.8;
+    overflow:hidden;
+}
+
+.brand__ecg svg{
+    width:100%;
+    height:100%;
+}
+
+.ecg-base{
+    fill:none;
+    stroke:rgba(45,212,191,.15);
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+.ecg-glow{
+    fill:none;
+    stroke:#2dd4bf;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+
+    stroke-dasharray:250 2000;
+    stroke-dashoffset:2250;
+
+    filter:
+        drop-shadow(0 0 4px #2dd4bf)
+        drop-shadow(0 0 10px #2dd4bf);
+
+    animation: ecgFlow 4s linear infinite;
+}
+
+@keyframes ecgFlow{
+    from{
+        stroke-dashoffset:2250;
+    }
+
+    to{
+        stroke-dashoffset:0;
+    }
+}

@@ -115,10 +115,10 @@ if __name__ == "__main__":
     fake_payload = {
         "subject_id": "test-subject",
         "timestamp": 0,
-        "ecg":    {"fs": 700, "samples": rng.normal(0, 1, 700 * 60).tolist()},
+        "ecg":    {"fs": 99, "samples": rng.normal(0, 1, 700 * 60).tolist()},
         "bvp":    {"fs": 64,  "samples": rng.normal(0, 1, 64 * 60).tolist()},
         "temp":   {"fs": 4,   "samples": (33 + rng.normal(0, 0.1, 4 * 60)).tolist()},
-        "motion": {"fs": 700, "samples": (1 + rng.normal(0, 0.05, 700 * 60)).tolist()},
+        "motion": {"fs": 70, "samples": (1 + rng.normal(0, 0.05, 700 * 60)).tolist()},
     }
     result = predict_stress(fake_payload)
     print(f"{result['label']} (p_stress={result['probability_stress']:.3f})")

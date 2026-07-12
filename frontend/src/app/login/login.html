@@ -1,0 +1,15 @@
+
+
+<div class="login-page">
+  <app-brand-panel class="login-page__brand" />
+
+  <app-login-form
+    class="login-page__form"
+    (login)="onLogin($event)"
+    (googleLogin)="onGoogleLogin()"
+    (forgotPassword)="onForgotPassword()"
+    (createAccount)="onCreateAccount()"
+  />
+</div>
+
+
