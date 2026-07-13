@@ -1,0 +1,43 @@
+<header class="topbar">
+  <!-- Greeting -->
+  <div class="topbar-greeting">
+    <div class="greeting-name">
+      <ng-container *ngIf="!isLoading; else skName">
+        Hello, {{ userName }}
+      </ng-container>
+      <ng-template #skName>
+        <span class="sk sk-name"></span>
+      </ng-template>
+    </div>
+    <div class="greeting-date">{{ today }}</div>
+  </div>
+
+  <!-- Notifications -->
+  <button
+    class="notif-btn"
+    matRipple
+    matTooltip="Notifications"
+    [matBadge]="notifCount"
+    matBadgeColor="warn"
+    matBadgeSize="small"
+    [matBadgeHidden]="notifCount === 0"
+  >
+    <mat-icon>notifications</mat-icon>
+  </button>
+
+  <!-- Wearable status -->
+  <div class="wearable-pill" matTooltip="État du wearable">
+    <span class="wearable-dot pulse"></span>
+    {{ wearableConnected ? 'Wearable connecté' : 'Wearable déconnecté' }} · {{ wearableBattery }} %
+  </div>
+
+  <!-- User chip -->
+  <div class="user-chip" matRipple>
+    <ng-container *ngIf="!isLoading; else skChip">
+      <div class="user-avatar">{{ userInitials }}</div>
+    </ng-container>
+    <ng-template #skChip>
+      <div class="sk sk-avatar"></div>
+    </ng-template>
+  </div>
+</header>

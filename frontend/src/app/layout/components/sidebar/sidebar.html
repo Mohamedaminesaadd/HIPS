@@ -1,0 +1,54 @@
+
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- LOGO & TOGGLE -->
+  <div class="sidebar-logo">
+    <button (click)="toggleSidebar()" class="logo-icon" matRipple>
+      <mat-icon>monitoring</mat-icon>
+    </button>
+    <span class="logo-text">HPIS</span>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="sidebar-nav">
+    <a class="nav-item" matRipple routerLink="/dashboard" routerLinkActive="active">
+      <mat-icon>dashboard</mat-icon>
+      <span>Tableau de bord</span>
+    </a>
+    <a class="nav-item" matRipple routerLink="/cardiaque" routerLinkActive="active">
+      <mat-icon>monitor_heart</mat-icon>
+      <span>Cardiaque</span>
+    </a>
+    <a class="nav-item" matRipple routerLink="/sommeil" routerLinkActive="active">
+      <mat-icon>bedtime</mat-icon>
+      <span>Sommeil</span>
+    </a>
+    <a class="nav-item" matRipple routerLink="/nutrition" routerLinkActive="active">
+      <mat-icon>restaurant</mat-icon>
+      <span>Nutrition</span>
+    </a>
+    <a class="nav-item" matRipple routerLink="/charge" routerLinkActive="active">
+      <mat-icon>fitness_center</mat-icon>
+      <span>Charge</span>
+    </a>
+    <a class="nav-item" matRipple routerLink="/agents-ia" routerLinkActive="active">
+      <mat-icon>smart_toy</mat-icon>
+      <span>Agents IA</span>
+    </a>
+    <a class="nav-item" matRipple routerLink="/capteurs" routerLinkActive="active">
+      <mat-icon>sensors</mat-icon>
+      <span>Capteurs</span>
+    </a>
+  </nav>
+
+  <!-- USER PROFILE -->
+  <div class="sidebar-user">
+    <div class="user-avatar">LM</div>
+    <div class="user-info">
+      <span class="user-name">Lina Meddeb</span>
+      <span class="user-role">Triathlon · Elite</span>
+    </div>
+    <button class="user-logout" matRipple (click)="logout()" title="Déconnexion">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</aside>
