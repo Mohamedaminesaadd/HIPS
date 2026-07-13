@@ -1,0 +1,27 @@
+<div class="nutrition-card">
+  <div class="header">
+    <span class="title">{{ title }}</span>
+    <span class="goal">Objectif {{ calorieGoal | number }} kcal</span>
+  </div>
+
+  <div class="body">
+    <div class="calories-block">
+      <span class="calories-value">{{ calories | number }}</span>
+      <span class="calories-unit">kcal</span>
+    </div>
+
+    <div class="macros-block">
+      <div class="macro-row" *ngFor="let macro of macros">
+        <span class="macro-label">{{ macro.label }}</span>
+        <div class="macro-bar-track">
+          <div
+            class="macro-bar-fill"
+            [style.width.%]="getMacroPercent(macro)"
+            [style.backgroundColor]="macro.color">
+          </div>
+        </div>
+        <span class="macro-value">{{ macro.value }} {{ macro.unit }}</span>
+      </div>
+    </div>
+  </div>
+</div>

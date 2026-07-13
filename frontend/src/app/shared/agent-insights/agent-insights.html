@@ -1,0 +1,26 @@
+<section class="insights-card">
+  <header class="insights-head">
+    <h3 class="insights-title">Insights des agents</h3>
+    <button class="insights-link">Tout voir</button>
+  </header>
+
+  <div class="insights-list">
+    <article
+      *ngFor="let it of insights; trackBy: trackById"
+      class="insight-item"
+      [attr.data-accent]="it.accent"
+    >
+      <div class="insight-icon">
+        <mat-icon>{{ it.icon }}</mat-icon>
+      </div>
+
+      <div class="insight-content">
+        <div class="insight-meta">
+          <span class="insight-agent">{{ it.agent }}</span>
+          <span class="insight-time">{{ it.time }}</span>
+        </div>
+        <p class="insight-msg">{{ it.message }}</p>
+      </div>
+    </article>
+  </div>
+</section>

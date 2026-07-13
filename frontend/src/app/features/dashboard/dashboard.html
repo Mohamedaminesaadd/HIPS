@@ -1,0 +1,24 @@
+<app-stats-row></app-stats-row>
+
+<div class="dashboard-grid">
+  <!-- COLONNE GAUCHE : VFC + Nutrition (Alignés verticalement) -->
+  <div class="left-col">
+    <app-vfc-chart></app-vfc-chart>
+
+    <app-nutrition-card
+      [calories]="2840"
+      [calorieGoal]="3100"
+      [macros]="[
+         { label: 'Protéines', value: 142, unit: 'g', max: 180, color: '#2dd4bf' },
+         { label: 'Glucides', value: 348, unit: 'g', max: 400, color: '#38bdf8' },
+         { label: 'Lipides', value: 86, unit: 'g', max: 100, color: '#f59e0b' }]"
+    >
+    </app-nutrition-card>
+  </div>
+
+  <!-- COLONNE DROITE : Insights de l'agent -->
+  <div class="right-col">
+    <app-agent-insights></app-agent-insights>
+    <!-- C'est ici que tu pourras ajouter d'autres cartes à droite plus tard -->
+  </div>
+</div>

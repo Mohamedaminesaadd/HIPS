@@ -1,0 +1,22 @@
+<section class="chart-card">
+  <header class="chart-head">
+    <h3 class="chart-title">Tendance VFC — 7 jours</h3>
+    <span class="chart-avg">Moy. {{ average }} ms</span>
+  </header>
+
+  <div class="chart-body">
+    <apx-chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [colors]="chartOptions.colors"
+      [plotOptions]="chartOptions.plotOptions"
+      [fill]="chartOptions.fill"
+      [dataLabels]="chartOptions.dataLabels"
+      [grid]="chartOptions.grid"
+      [xaxis]="chartOptions.xaxis"
+      [yaxis]="chartOptions.yaxis"
+      [tooltip]="chartOptions.tooltip"
+      [states]="chartOptions.states"
+    ></apx-chart>
+  </div>
+</section>

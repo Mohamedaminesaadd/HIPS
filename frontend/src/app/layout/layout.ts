@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 
 import { Sidebar } from './components/sidebar/sidebar';
 import { Header } from './components/header/header';
+import { Dashboard } from "../features/dashboard/dashboard";
 
 @Component({
   selector: 'app-layout',
@@ -12,8 +13,9 @@ import { Header } from './components/header/header';
   imports: [
     RouterOutlet,
     Sidebar,
-    Header
-  ]
+    Header,
+    Dashboard
+]
 })
 export class Layout {
 

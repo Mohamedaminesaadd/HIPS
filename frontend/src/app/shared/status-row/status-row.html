@@ -1,0 +1,281 @@
+<!-- =====================================================
+     STATS ROW - HPIS
+====================================================== -->
+
+<div class="stats-row">
+
+    <!-- =====================================================
+         RÉCUPÉRATION
+    ====================================================== -->
+
+    <div class="stat-card" matRipple>
+
+        <div class="card-top">
+
+            <div class="stat-icon" style="background:#ECFDF5">
+                <mat-icon style="color:#10B981">
+                    fitness_center
+                </mat-icon>
+            </div>
+
+            <span class="trend trend-up">
+
+                ↑ +{{ recoveryTrend }} pts vs hier
+
+            </span>
+
+        </div>
+
+        <div class="stat-label">
+
+            RÉCUPÉRATION
+
+        </div>
+
+        <div class="stat-value">
+
+            {{ recovery }}
+
+            <span>%</span>
+
+        </div>
+
+        <div class="progress-wrap">
+
+            <div
+                class="progress-bar"
+                [style.width.%]="recovery"
+                style="background:#10B981">
+            </div>
+
+        </div>
+
+        <div class="stat-divider"></div>
+
+        <div class="stat-mini-row">
+
+            <span class="mini-label">
+
+                Readiness Score
+
+            </span>
+
+            <span class="badge badge-green">
+
+                Excellent
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         HRV / RMSSD
+    ====================================================== -->
+
+    <div class="stat-card" matRipple>
+
+        <div class="card-top">
+
+            <div class="stat-icon" style="background:#EFF6FF">
+
+                <mat-icon style="color:#2563EB">
+
+                    favorite
+
+                </mat-icon>
+
+            </div>
+
+            <span class="trend trend-up">
+
+                ↑ +{{ rmssdTrend }} % sur 7 j
+
+            </span>
+
+        </div>
+
+        <div class="stat-label">
+
+            VFC · RMSSD
+
+        </div>
+
+        <div class="stat-value">
+
+            {{ rmssd }}
+
+            <span>ms</span>
+
+        </div>
+
+        <div class="progress-wrap">
+
+            <div
+                class="progress-bar"
+                [style.width.%]="68"
+                style="background:#2563EB">
+            </div>
+
+        </div>
+
+        <div class="stat-divider"></div>
+
+        <div class="stat-mini-row">
+
+            <span class="mini-label">
+
+                Variabilité cardiaque
+
+            </span>
+
+            <span class="badge badge-blue">
+
+                Stable
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         FC REPOS
+    ====================================================== -->
+
+    <div class="stat-card" matRipple>
+
+        <div class="card-top">
+
+            <div class="stat-icon" style="background:#FEF2F2">
+
+                <mat-icon style="color:#EF4444">
+
+                    monitor_heart
+
+                </mat-icon>
+
+            </div>
+
+            <span class="trend trend-up">
+
+                ↓ {{ restingTrend }} bpm sur 7 j
+
+            </span>
+
+        </div>
+
+        <div class="stat-label">
+
+            FC REPOS
+
+        </div>
+
+        <div class="stat-value">
+
+            {{ restingHeartRate }}
+
+            <span>bpm</span>
+
+        </div>
+
+        <div class="progress-wrap">
+
+            <div
+                class="progress-bar"
+                [style.width.%]="78"
+                style="background:#EF4444">
+            </div>
+
+        </div>
+
+        <div class="stat-divider"></div>
+
+        <div class="stat-mini-row">
+
+            <span class="mini-label">
+
+                Moyenne hebdomadaire
+
+            </span>
+
+            <span class="badge badge-green">
+
+                Optimale
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         SOMMEIL
+    ====================================================== -->
+
+    <div class="stat-card" matRipple>
+
+        <div class="card-top">
+
+            <div class="stat-icon" style="background:#F5F3FF">
+
+                <mat-icon style="color:#7C3AED">
+
+                    bedtime
+
+                </mat-icon>
+
+            </div>
+
+            <span class="badge badge-purple">
+
+                {{ sleepEfficiency }} %
+
+            </span>
+
+        </div>
+
+        <div class="stat-label">
+
+            SOMMEIL
+
+        </div>
+
+        <div class="stat-value">
+
+            {{ sleepHours }}
+
+        </div>
+
+        <div class="progress-wrap">
+
+            <div
+                class="progress-bar"
+                [style.width.%]="sleepEfficiency"
+                style="background:#7C3AED">
+            </div>
+
+        </div>
+
+        <div class="stat-divider"></div>
+
+        <div class="stat-mini-row">
+
+            <span class="mini-label">
+
+                {{ deepSleep }} de sommeil profond
+
+            </span>
+
+            <span class="badge badge-purple">
+
+                Qualité élevée
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>

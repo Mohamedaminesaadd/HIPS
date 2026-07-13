@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* ===========================================
+   KPI ROW (Ligne du haut)
+=========================================== */
+app-stats-row {
+  display: block;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+/* ===========================================
+   GRILLE PRINCIPALE (Horizontale)
+=========================================== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 24px;
+  width: 100%;
+  align-items: start; /* Évite que les colonnes se forcent à avoir la même hauteur */
+}
+
+/* ===========================================
+   CONTENEURS VERTICAUX (Gauche & Droite)
+=========================================== */
+.left-col, 
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Styles de base des composants pour la fluidité */
+app-vfc-chart,
+app-nutrition-card,
+app-agent-insights {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+/* ===========================================
+   RESPONSIVE (Passage sur une seule colonne sur mobile/tablette)
+=========================================== */
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

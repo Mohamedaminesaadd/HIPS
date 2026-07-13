@@ -1,0 +1,343 @@
+/* ==========================================================
+   VARIABLES — thème HPIS (navy / teal)
+========================================================== */
+
+:host{
+    --card-bg:      #0F1A2E;
+    --card-bg-hover:#141E33;
+    --border:       rgba(148, 163, 184, 0.10);
+    --border-hover: rgba(148, 163, 184, 0.20);
+    --text-h:       #F1F5F9;
+    --text-s:       #94A3B8;
+    --text-m:       #64748B;
+    --track:        rgba(148, 163, 184, 0.12);
+    --divider:      rgba(148, 163, 184, 0.08);
+}
+
+/* ==========================================================
+   HPIS KPI ROW
+========================================================== */
+
+.stats-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;               /* Réduit de 18px à 14px */
+    margin-bottom:20px;     /* Réduit de 24px à 20px */
+}
+
+/* ==========================================================
+   CARD - TAILLE RÉDUITE
+========================================================== */
+
+.stat-card{
+    display:flex;
+    flex-direction:column;
+    gap:10px;               /* Réduit de 14px à 10px */
+    padding:14px 16px;      /* Réduit de 18px à 14px 16px */
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:14px;     /* Réduit de 18px à 14px */
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+    cursor:pointer;
+}
+
+.stat-card:hover{
+    transform:translateY(-3px);  /* Réduit de -4px à -3px */
+    background:var(--card-bg-hover);
+    border-color:var(--border-hover);
+    box-shadow:
+        0 14px 30px rgba(0,0,0,.35);  /* Réduit l'ombre */
+}
+
+/* ==========================================================
+   TOP
+========================================================== */
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+}
+
+/* ==========================================================
+   ICON - TAILLE RÉDUITE
+========================================================== */
+
+.stat-icon{
+    width:36px;             /* Réduit de 48px à 36px */
+    height:36px;            /* Réduit de 48px à 36px */
+    border-radius:10px;     /* Réduit de 14px à 10px */
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.stat-icon mat-icon{
+    font-size:18px;         /* Réduit de 24px à 18px */
+    width:18px;
+    height:18px;
+}
+
+/* Variantes d'icônes (fond translucide + teinte) */
+.icon-blue   { background:rgba(59,130,246,.14); }
+.icon-blue   mat-icon{ color:#3B82F6; }
+
+.icon-cyan   { background:rgba(6,182,212,.14); }
+.icon-cyan   mat-icon{ color:#06B6D4; }
+
+.icon-green  { background:rgba(52,211,153,.14); }
+.icon-green  mat-icon{ color:#34D399; }
+
+.icon-purple { background:rgba(167,139,250,.14); }
+.icon-purple mat-icon{ color:#A78BFA; }
+
+.icon-red    { background:rgba(248,113,113,.14); }
+.icon-red    mat-icon{ color:#F87171; }
+
+/* ==========================================================
+   LABEL
+========================================================== */
+
+.stat-label{
+    font-size:11px;         /* Réduit de 12px à 11px */
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   VALUE - TAILLE RÉDUITE
+========================================================== */
+
+.stat-value{
+    font-size:26px;         /* Réduit de 34px à 26px */
+    font-weight:800;
+    color:var(--text-h);
+    line-height:1.1;        /* Ajouté pour meilleur espacement */
+}
+
+.stat-value span{
+    margin-left:4px;
+    font-size:14px;         /* Réduit de 16px à 14px */
+    font-weight:600;
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   TREND - TAILLE RÉDUITE
+========================================================== */
+
+.trend{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:3px 8px;        /* Réduit de 5px 10px à 3px 8px */
+    border-radius:999px;
+    font-size:10px;         /* Réduit de 11px à 10px */
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.trend-up{
+    background:rgba(52,211,153,.14);
+    color:#34D399;
+}
+
+.trend-down{
+    background:rgba(248,113,113,.14);
+    color:#F87171;
+}
+
+.trend-neutral{
+    background:rgba(148,163,184,.12);
+    color:#94A3B8;
+}
+
+/* ==========================================================
+   BADGE - TAILLE RÉDUITE
+========================================================== */
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:3px 8px;        /* Réduit de 5px 10px à 3px 8px */
+    border-radius:999px;
+    font-size:10px;         /* Réduit de 11px à 10px */
+    font-weight:600;
+}
+
+.badge-green{
+    background:rgba(52,211,153,.14);
+    color:#34D399;
+}
+
+.badge-blue{
+    background:rgba(59,130,246,.14);
+    color:#60A5FA;
+}
+
+.badge-purple{
+    background:rgba(167,139,250,.14);
+    color:#A78BFA;
+}
+
+.badge-red{
+    background:rgba(248,113,113,.14);
+    color:#F87171;
+}
+
+/* ==========================================================
+   PROGRESS - TAILLE RÉDUITE
+========================================================== */
+
+.progress-wrap{
+    width:100%;
+    height:5px;             /* Réduit de 8px à 5px */
+    border-radius:999px;
+    background:var(--track);
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    border-radius:999px;
+    transition:width .6s ease;
+    /* défaut : dégradé bleu→cyan de la marque */
+    background:linear-gradient(90deg,#2563EB 0%,#06B6D4 100%);
+}
+
+/* variantes optionnelles */
+.progress-bar.green { background:linear-gradient(90deg,#059669 0%,#34D399 100%); }
+.progress-bar.red   { background:linear-gradient(90deg,#DC2626 0%,#F87171 100%); }
+
+/* ==========================================================
+   DIVIDER
+========================================================== */
+
+.stat-divider{
+    height:1px;
+    background:var(--divider);
+}
+
+/* ==========================================================
+   FOOTER - TAILLE RÉDUITE
+========================================================== */
+
+.stat-mini-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.mini-label{
+    font-size:11px;         /* Réduit de 12px à 11px */
+    color:var(--text-s);
+}
+
+.mini-val{
+    font-size:12px;         /* Réduit de 13px à 12px */
+    font-weight:700;
+    color:var(--text-h);
+}
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+.stat-card{
+    animation:fadeUp .45s ease forwards;
+}
+
+.stat-card:nth-child(2){ animation-delay:.08s; }
+.stat-card:nth-child(3){ animation-delay:.16s; }
+.stat-card:nth-child(4){ animation-delay:.24s; }
+
+@keyframes fadeUp{
+    from{ opacity:0; transform:translateY(10px); }  /* Réduit de 12px à 10px */
+    to  { opacity:1; transform:translateY(0); }
+}
+
+/* ==========================================================
+   SKELETON - TAILLE RÉDUITE
+========================================================== */
+
+.stats-skeleton{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;               /* Réduit de 18px à 14px */
+}
+
+.skeleton-card{
+    height:140px;           /* Réduit de 180px à 140px */
+    border-radius:14px;     /* Réduit de 18px à 14px */
+    background:linear-gradient(
+        90deg,
+        #141E33 25%,
+        #1E2A44 50%,
+        #141E33 75%
+    );
+    background-size:200% 100%;
+    animation:shimmer 1.5s infinite;
+}
+
+@keyframes shimmer{
+    from{ background-position:200% 0; }
+    to  { background-position:-200% 0; }
+}
+
+/* ==========================================================
+   ERROR
+========================================================== */
+
+.stats-error{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px;           /* Réduit de 18px à 14px */
+    border-radius:12px;     /* Réduit de 14px à 12px */
+    background:rgba(248,113,113,.10);
+    color:#F87171;
+    border:1px solid rgba(248,113,113,.30);
+}
+
+/* ==========================================================
+   RESPONSIVE - AJUSTEMENTS
+========================================================== */
+
+@media(max-width:1200px){
+    .stats-row{ 
+        grid-template-columns:repeat(2,1fr); 
+        gap:12px;           /* Réduit pour tablette */
+    }
+    .stats-skeleton{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+}
+
+@media(max-width:768px){
+    .stats-row{ 
+        grid-template-columns:1fr; 
+        gap:10px;           /* Réduit pour mobile */
+    }
+    .stats-skeleton{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+    .stat-card{ 
+        padding:12px 14px;  /* Réduit encore plus sur mobile */
+    }
+    .stat-value{ 
+        font-size:22px;     /* Réduit sur mobile */
+    }
+    .skeleton-card{
+        height:120px;       /* Réduit sur mobile */
+    }
+}
