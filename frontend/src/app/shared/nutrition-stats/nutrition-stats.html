@@ -1,0 +1,202 @@
+<!-- =====================================================
+     NUTRITION STATS
+====================================================== -->
+
+<div class="nutrition-stats">
+
+  <!-- =======================
+       Calories
+  ======================== -->
+
+  <div class="stat-card" matRipple>
+
+    <div class="stat-title">
+
+      CALORIES
+
+    </div>
+
+    <div class="stat-main">
+
+      <span class="stat-value">
+
+        {{ calories }}
+
+      </span>
+
+      <span class="stat-target">
+
+        / {{ caloriesGoal | number:'1.0-0':'fr' }} kcal
+
+      </span>
+
+    </div>
+
+    <div class="progress">
+
+      <div
+        class="progress-fill progress-blue"
+        [style.width.%]="caloriesPercent">
+      </div>
+
+    </div>
+
+    <div class="stat-footer">
+
+      Ajusté jour d'entraînement
+
+    </div>
+
+  </div>
+
+  <!-- =======================
+       Proteines
+  ======================== -->
+
+  <div class="stat-card" matRipple>
+
+    <div class="stat-title">
+
+      PROTÉINES
+
+    </div>
+
+    <div class="stat-main">
+
+      <span class="stat-value">
+
+        {{ proteins }}
+
+      </span>
+
+      <span class="stat-target">
+
+        / {{ proteinsGoal }} g
+
+      </span>
+
+    </div>
+
+    <div class="progress">
+
+      <div
+        class="progress-fill progress-green"
+        [style.width.%]="proteinsPercent">
+      </div>
+
+    </div>
+
+    <div class="warning">
+
+      -{{ remainingProteins }} g vs cible
+
+    </div>
+
+  </div>
+
+  <!-- =======================
+       Glucides + Lipides
+  ======================== -->
+
+  <div class="stat-card" matRipple>
+
+    <div class="stat-title">
+
+      GLUCIDES · LIPIDES
+
+    </div>
+
+    <div class="macro">
+
+      <div class="macro-row">
+
+        <div class="macro-values">
+
+          <strong>{{ carbs }}</strong>
+
+          <span>/ {{ carbsGoal }} g glucides</span>
+
+        </div>
+
+        <div class="progress">
+
+          <div
+            class="progress-fill progress-cyan"
+            [style.width.%]="carbsPercent">
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="macro-row">
+
+        <div class="macro-values">
+
+          <strong>{{ fats }}</strong>
+
+          <span>/ {{ fatsGoal }} g lipides</span>
+
+        </div>
+
+        <div class="progress">
+
+          <div
+            class="progress-fill progress-orange"
+            [style.width.%]="fatsPercent">
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =======================
+       Hydratation
+  ======================== -->
+
+  <div class="stat-card" matRipple>
+
+    <div class="stat-title">
+
+      HYDRATATION
+
+    </div>
+
+    <div class="stat-main">
+
+      <span class="stat-value">
+
+        {{ water | number:'1.1-1' }}
+
+      </span>
+
+      <span class="stat-target">
+
+        / {{ waterGoal | number:'1.1-1' }} L
+
+      </span>
+
+    </div>
+
+    <div class="progress">
+
+      <div
+        class="progress-fill progress-water"
+        [style.width.%]="waterPercent">
+      </div>
+
+    </div>
+
+    <button class="water-btn">
+
+      +250 ml
+
+    </button>
+
+  </div>
+
+</div>

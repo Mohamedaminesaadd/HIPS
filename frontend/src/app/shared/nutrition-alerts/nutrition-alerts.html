@@ -1,0 +1,99 @@
+<!-- =====================================================
+     NUTRITION ALERTS
+====================================================== -->
+
+<div class="nutrition-alerts">
+
+    <!-- Header -->
+
+    <div class="alerts-header">
+
+        <div>
+
+            <h2 class="alerts-title">
+
+                Carences détectées
+
+            </h2>
+
+            <p class="alerts-subtitle">
+
+                Recommandations nutritionnelles générées par HPIS.
+
+            </p>
+
+        </div>
+
+        <button class="alerts-btn">
+
+            Voir le rapport
+
+        </button>
+
+    </div>
+
+    <!-- Liste -->
+
+    <div class="alerts-list">
+
+        <div
+            class="alert-card"
+            *ngFor="let alert of alerts">
+
+            <!-- Icône -->
+
+            <div
+                class="alert-icon"
+                [ngClass]="{
+                    'danger': alert.level==='high',
+                    'warning': alert.level==='medium',
+                    'success': alert.level==='low'
+                }">
+
+                <mat-icon>
+
+                    {{ alert.icon }}
+
+                </mat-icon>
+
+            </div>
+
+            <!-- Contenu -->
+
+            <div class="alert-content">
+
+                <div class="alert-top">
+
+                    <h3>
+
+                        {{ alert.title }}
+
+                    </h3>
+
+                    <span
+                        class="alert-level"
+                        [ngClass]="{
+                            'danger': alert.level==='high',
+                            'warning': alert.level==='medium',
+                            'success': alert.level==='low'
+                        }">
+
+                        {{ alert.level }}
+
+                    </span>
+
+                </div>
+
+                <p>
+
+                    {{ alert.description }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

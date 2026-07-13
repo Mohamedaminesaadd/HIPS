@@ -1,0 +1,222 @@
+/* ==========================================================
+   HPIS THEME
+========================================================== */
+
+:host{
+
+    display:block;
+    width:100%;
+
+    --card-bg:#0F1A2E;
+    --card-bg-hover:#141E33;
+
+    --border:rgba(148,163,184,.10);
+    --border-hover:rgba(148,163,184,.20);
+
+    --text-h:#F1F5F9;
+    --text-s:#94A3B8;
+    --text-m:#64748B;
+
+    --primary:#2563EB;
+    --secondary:#06B6D4;
+
+    --shadow:0 14px 30px rgba(0,0,0,.35);
+}
+
+/* ==========================================================
+   CONTAINER
+========================================================== */
+
+.meal-log{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.meal-log__header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:18px;
+}
+
+.meal-log__title{
+
+    margin:0;
+
+    font-size:1.7rem;
+
+    font-weight:800;
+
+    color:var(--text-h);
+
+    letter-spacing:-.4px;
+}
+
+.meal-log__subtitle{
+
+    margin-top:6px;
+
+    color:var(--text-s);
+
+    font-size:.92rem;
+
+    line-height:1.5;
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+.meal-log__button{
+
+    height:44px;
+
+    padding:0 22px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:.9rem;
+
+    font-weight:700;
+
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.meal-log__button:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 24px rgba(37,99,235,.35);
+}
+
+/* ==========================================================
+   LIST
+========================================================== */
+
+.meal-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+}
+
+/* ==========================================================
+   ITEMS ANIMATION
+========================================================== */
+
+.meal-list app-meal-item{
+
+    display:block;
+
+    animation:fadeUp .45s ease both;
+}
+
+.meal-list app-meal-item:nth-child(1){
+
+    animation-delay:.05s;
+}
+
+.meal-list app-meal-item:nth-child(2){
+
+    animation-delay:.10s;
+}
+
+.meal-list app-meal-item:nth-child(3){
+
+    animation-delay:.15s;
+}
+
+.meal-list app-meal-item:nth-child(4){
+
+    animation-delay:.20s;
+}
+
+.meal-list app-meal-item:nth-child(5){
+
+    animation-delay:.25s;
+}
+
+.meal-list app-meal-item:nth-child(6){
+
+    animation-delay:.30s;
+}
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:768px){
+
+    .meal-log__header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:16px;
+    }
+
+    .meal-log__button{
+
+        width:100%;
+    }
+
+    .meal-log__title{
+
+        font-size:1.5rem;
+    }
+
+}

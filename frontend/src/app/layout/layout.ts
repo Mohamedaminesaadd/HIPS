@@ -5,6 +5,7 @@ import { Sidebar } from './components/sidebar/sidebar';
 import { Header } from './components/header/header';
 import { Dashboard } from "../features/dashboard/dashboard";
 import { Training } from "../features/training/training";
+import { Nutrition } from "../features/nutrition/nutrition";
 
 @Component({
   selector: 'app-layout',
@@ -16,7 +17,8 @@ import { Training } from "../features/training/training";
     Sidebar,
     Header,
     Dashboard,
-    Training
+    Training,
+    Nutrition
 ]
 })
 export class Layout {

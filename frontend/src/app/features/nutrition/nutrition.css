@@ -1,0 +1,57 @@
+:host{
+
+    display:block;
+
+    width:100%;
+}
+
+app-nutrition-header{
+
+    display:block;
+
+    margin-bottom:24px;
+}
+
+app-nutrition-stats{
+
+    display:block;
+
+    margin-bottom:24px;
+}
+
+.nutrition-content{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:24px;
+
+    align-items:start;
+}
+
+.nutrition-left{
+
+    min-width:0;
+}
+
+.nutrition-right{
+
+    position:sticky;
+
+    top:24px;
+}
+
+@media(max-width:1100px){
+
+    .nutrition-content{
+
+        grid-template-columns:1fr;
+    }
+
+    .nutrition-right{
+
+        position:static;
+    }
+
+}

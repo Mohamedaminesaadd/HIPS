@@ -1,0 +1,48 @@
+<!-- =====================================================
+     MEAL LOG
+====================================================== -->
+
+<div class="meal-log">
+
+  <!-- Header -->
+
+  <div class="meal-log__header">
+
+    <div>
+
+      <h2 class="meal-log__title">
+
+        Journal des repas
+
+      </h2>
+
+      <p class="meal-log__subtitle">
+
+        Répartition de vos repas de la journée.
+
+      </p>
+
+    </div>
+
+    <button
+      class="meal-log__button">
+
+      Voir historique
+
+    </button>
+
+  </div>
+
+  <!-- Liste des repas -->
+
+  <div class="meal-list">
+
+    <app-meal-item
+      *ngFor="let meal of meals"
+      [meal]="meal">
+
+    </app-meal-item>
+
+  </div>
+
+</div>

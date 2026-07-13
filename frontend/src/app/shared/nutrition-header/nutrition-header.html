@@ -1,0 +1,81 @@
+<div class="nutrition-header">
+
+    <div class="header-left">
+
+        <h1 class="title">
+
+            Journal Nutrition
+
+        </h1>
+
+        <p class="subtitle">
+
+            Suivi quotidien de votre alimentation et de vos objectifs nutritionnels.
+
+        </p>
+
+    </div>
+
+    <div class="header-right">
+
+        <button
+            mat-icon-button
+            class="date-btn"
+            (click)="previousDay.emit()">
+
+            <mat-icon>
+
+                chevron_left
+
+            </mat-icon>
+
+        </button>
+
+        <div class="date-card">
+
+            <mat-icon>
+
+                calendar_today
+
+            </mat-icon>
+
+            <span>
+
+                {{ currentDate }}
+
+            </span>
+
+        </div>
+
+        <button
+            mat-icon-button
+            class="date-btn"
+            (click)="nextDay.emit()">
+
+            <mat-icon>
+
+                chevron_right
+
+            </mat-icon>
+
+        </button>
+
+        <button
+            mat-flat-button
+            color="primary"
+            class="add-btn"
+            (click)="addMeal.emit()">
+
+            <mat-icon>
+
+                add
+
+            </mat-icon>
+
+            Ajouter un repas
+
+        </button>
+
+    </div>
+
+</div>

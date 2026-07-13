@@ -1,0 +1,390 @@
+/* ==========================================================
+   HPIS THEME
+========================================================== */
+
+:host{
+    display:block;
+    width:100%;
+
+    --card-bg:#0F1A2E;
+    --card-bg-hover:#141E33;
+
+    --border:rgba(148,163,184,.10);
+    --border-hover:rgba(148,163,184,.20);
+
+    --text-h:#F1F5F9;
+    --text-s:#94A3B8;
+    --text-m:#64748B;
+
+    --track:rgba(148,163,184,.12);
+    --divider:rgba(148,163,184,.08);
+
+    --shadow:0 14px 30px rgba(0,0,0,.35);
+}
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.nutrition-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:20px;
+}
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.stat-card{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+
+    padding:16px;
+
+    background:var(--card-bg);
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+
+    cursor:pointer;
+
+    animation:fadeUp .45s ease forwards;
+}
+
+.stat-card:hover{
+
+    transform:translateY(-3px);
+
+    background:var(--card-bg-hover);
+
+    border-color:var(--border-hover);
+
+    box-shadow:var(--shadow);
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.stat-title{
+
+    font-size:11px;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+    font-weight:700;
+
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   VALUE
+========================================================== */
+
+.stat-main{
+
+    display:flex;
+
+    align-items:flex-end;
+
+    gap:8px;
+}
+
+.stat-value{
+
+    font-size:28px;
+
+    font-weight:800;
+
+    color:var(--text-h);
+
+    line-height:1;
+}
+
+.stat-target{
+
+    margin-bottom:3px;
+
+    font-size:13px;
+
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   PROGRESS
+========================================================== */
+
+.progress{
+
+    width:100%;
+
+    height:6px;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    background:var(--track);
+}
+
+.progress-fill{
+
+    height:100%;
+
+    border-radius:999px;
+
+    transition:width .6s ease;
+
+    background:linear-gradient(
+        90deg,
+        #2563EB,
+        #06B6D4
+    );
+}
+
+/* ==========================================================
+   COLOR VARIANTS
+========================================================== */
+
+.progress-blue{
+    background:linear-gradient(90deg,#2563EB,#06B6D4);
+}
+
+.progress-green{
+    background:linear-gradient(90deg,#059669,#34D399);
+}
+
+.progress-cyan{
+    background:linear-gradient(90deg,#0891B2,#22D3EE);
+}
+
+.progress-orange{
+    background:linear-gradient(90deg,#EA580C,#FB923C);
+}
+
+.progress-water{
+    background:linear-gradient(90deg,#0284C7,#38BDF8);
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.stat-footer{
+
+    margin-top:auto;
+
+    font-size:12px;
+
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   WARNING
+========================================================== */
+
+.warning{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    width:max-content;
+
+    padding:4px 8px;
+
+    border-radius:999px;
+
+    background:rgba(249,115,22,.15);
+
+    color:#FB923C;
+
+    font-size:11px;
+
+    font-weight:700;
+}
+
+/* ==========================================================
+   MACROS
+========================================================== */
+
+.macro{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+}
+
+.macro-row{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+}
+
+.macro-values{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+.macro-values strong{
+
+    font-size:16px;
+
+    font-weight:700;
+
+    color:var(--text-h);
+}
+
+.macro-values span{
+
+    font-size:12px;
+
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   WATER BUTTON
+========================================================== */
+
+.water-btn{
+
+    margin-top:auto;
+
+    height:38px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        #2563EB,
+        #06B6D4
+    );
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.water-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(37,99,235,.35);
+}
+
+/* ==========================================================
+   DIVIDER
+========================================================== */
+
+.stat-card::after{
+
+    content:"";
+
+    width:100%;
+
+    height:1px;
+
+    background:var(--divider);
+
+    margin-top:auto;
+
+    display:none;
+}
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+.stat-card:nth-child(2){
+    animation-delay:.08s;
+}
+
+.stat-card:nth-child(3){
+    animation-delay:.16s;
+}
+
+.stat-card:nth-child(4){
+    animation-delay:.24s;
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:1200px){
+
+    .nutrition-stats{
+
+        grid-template-columns:repeat(2,1fr);
+
+        gap:12px;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .nutrition-stats{
+
+        grid-template-columns:1fr;
+
+        gap:10px;
+    }
+
+    .stat-card{
+
+        padding:14px;
+    }
+
+    .stat-value{
+
+        font-size:22px;
+    }
+
+}

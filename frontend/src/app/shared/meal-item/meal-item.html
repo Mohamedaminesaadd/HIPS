@@ -1,0 +1,267 @@
+<!-- =====================================================
+     MEAL ITEM
+====================================================== -->
+
+<div
+  class="meal-item"
+  [class.expanded]="meal.expanded">
+
+  <!-- ==========================================
+       HEADER
+  =========================================== -->
+
+  <div
+    class="meal-header"
+    matRipple
+    (click)="toggle()">
+
+    <div class="header-left">
+
+      <mat-icon class="chevron">
+
+        {{ meal.expanded ? 'expand_less' : 'expand_more' }}
+
+      </mat-icon>
+
+      <div class="meal-icon">
+
+        <mat-icon>
+
+          {{ meal.icon }}
+
+        </mat-icon>
+
+      </div>
+
+      <div class="meal-info">
+
+        <div class="meal-name">
+
+          {{ meal.name }}
+
+        </div>
+
+        <div class="meal-time">
+
+          {{ meal.time }}
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="header-right">
+
+      <div class="meal-calories">
+
+        {{ meal.calories }} kcal
+
+      </div>
+
+      <button
+        class="icon-btn"
+        (click)="$event.stopPropagation(); editMeal()">
+
+        <mat-icon>
+
+          edit
+
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       BODY
+  =========================================== -->
+
+  <div
+    class="meal-body"
+    *ngIf="meal.expanded">
+
+    <!-- =======================
+         MACROS
+    ======================== -->
+
+    <div class="macro-summary">
+
+      <div class="macro-card">
+
+        <span class="macro-value">
+
+          {{ meal.proteins }} g
+
+        </span>
+
+        <span class="macro-label">
+
+          Protéines
+
+        </span>
+
+      </div>
+
+      <div class="macro-card">
+
+        <span class="macro-value">
+
+          {{ meal.carbs }} g
+
+        </span>
+
+        <span class="macro-label">
+
+          Glucides
+
+        </span>
+
+      </div>
+
+      <div class="macro-card">
+
+        <span class="macro-value">
+
+          {{ meal.fats }} g
+
+        </span>
+
+        <span class="macro-label">
+
+          Lipides
+
+        </span>
+
+      </div>
+
+    </div>
+
+    <!-- =======================
+         FOOD TABLE
+    ======================== -->
+
+    <div
+      class="food-table"
+      *ngIf="meal.foods.length">
+
+      <div class="table-header">
+
+        <span>
+
+          Aliment
+
+        </span>
+
+        <span>
+
+          Quantité
+
+        </span>
+
+        <span>
+
+          Calories
+
+        </span>
+
+        <span>
+
+          Actions
+
+        </span>
+
+      </div>
+
+      <div
+        class="table-row"
+        *ngFor="let food of meal.foods">
+
+        <span>
+
+          {{ food.name }}
+
+        </span>
+
+        <span>
+
+          {{ food.quantity }}
+
+        </span>
+
+        <span>
+
+          {{ food.calories }} kcal
+
+        </span>
+
+        <div class="actions">
+
+          <button
+            class="icon-btn"
+            (click)="editFood(food)">
+
+            <mat-icon>
+
+              edit
+
+            </mat-icon>
+
+          </button>
+
+          <button
+            class="icon-btn delete"
+            (click)="deleteFood(food)">
+
+            <mat-icon>
+
+              delete
+
+            </mat-icon>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =======================
+         FOOTER
+    ======================== -->
+
+    <div class="meal-footer">
+
+      <button
+        class="add-food-btn"
+        (click)="addFood()">
+
+        <mat-icon>
+
+          add
+
+        </mat-icon>
+
+        Ajouter un aliment
+
+      </button>
+
+      <div class="meal-total">
+
+        Total :
+        <strong>
+
+          {{ meal.calories }} kcal
+
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
