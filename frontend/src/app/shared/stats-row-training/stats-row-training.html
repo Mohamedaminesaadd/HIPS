@@ -1,0 +1,107 @@
+<!-- =====================================================
+     STATS ROW - TRAINING
+====================================================== -->
+
+<div class="stats-row-training">
+
+    <!-- =====================================================
+         VOLUME TOTAL
+    ====================================================== -->
+
+    <div class="stat-card" matRipple>
+
+        <div class="stat-value">
+
+            {{ totalVolume | number:'1.0-0':'fr' }}
+
+            <span>kg</span>
+
+        </div>
+
+        <div class="stat-label">
+
+            VOLUME TOTAL
+
+        </div>
+
+        <div class="trend trend-up">
+
+            ↑ +{{ volumeTrend }} % vs dernière séance jambes
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         1RM ESTIMÉ
+    ====================================================== -->
+
+    <div class="stat-card" matRipple>
+
+        <div class="stat-label">
+
+            1RM ESTIMÉ · {{ exerciseName }}
+
+        </div>
+
+        <div class="stat-value">
+
+            {{ oneRm }}
+
+            <span>kg</span>
+
+        </div>
+
+        <div class="progress-row">
+
+            <div class="progress-wrap">
+
+                <div
+                    class="progress-bar green"
+                    [style.width.%]="oneRmPercent">
+                </div>
+
+            </div>
+
+            <span class="progress-hint">
+
+                Objectif {{ oneRmGoal }} kg
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         SÉRIES EFFECTUÉES
+    ====================================================== -->
+
+    <div class="stat-card" matRipple>
+
+        <div class="stat-label">
+
+            SÉRIES EFFECTUÉES
+
+        </div>
+
+        <div class="stat-value">
+
+            {{ setsDone }}
+
+            <span>/{{ setsTarget }}</span>
+
+        </div>
+
+        <div class="progress-wrap">
+
+            <div
+                class="progress-bar blue"
+                [style.width.%]="setsPercent">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

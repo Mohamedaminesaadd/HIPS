@@ -1,0 +1,162 @@
+/* ==========================================================
+   VARIABLES — thème HPIS (navy / teal)
+========================================================== */
+
+:host{
+    --card-bg:      #0F1A2E;
+    --card-bg-hover:#141E33;
+    --border:       rgba(148, 163, 184, 0.10);
+    --border-hover: rgba(148, 163, 184, 0.20);
+    --text-h:       #F1F5F9;
+    --text-s:       #94A3B8;
+    --text-m:       #64748B;
+    --track:        rgba(148, 163, 184, 0.12);
+}
+
+/* ==========================================================
+   ROW
+========================================================== */
+
+.stats-row-training{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:16px;
+}
+
+/* ==========================================================
+   CARD - TRÈS COMPACTE
+========================================================== */
+
+.stat-card{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:12px 14px;
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+    cursor:pointer;
+}
+
+.stat-card:hover{
+    transform:translateY(-2px);
+    background:var(--card-bg-hover);
+    border-color:var(--border-hover);
+    box-shadow:0 10px 22px rgba(0,0,0,.32);
+}
+
+/* ==========================================================
+   LABEL
+========================================================== */
+
+.stat-label{
+    font-size:10px;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   VALUE
+========================================================== */
+
+.stat-value{
+    font-size:22px;
+    font-weight:800;
+    color:var(--text-h);
+    line-height:1.1;
+}
+
+.stat-value span{
+    margin-left:4px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-s);
+}
+
+/* ==========================================================
+   TREND
+========================================================== */
+
+.trend{
+    font-size:10px;
+    font-weight:600;
+    color:#34D399;
+}
+
+.trend-down{
+    color:#F87171;
+}
+
+/* ==========================================================
+   PROGRESS
+========================================================== */
+
+.progress-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.progress-wrap{
+    flex:1;
+    width:100%;
+    height:4px;
+    border-radius:999px;
+    background:var(--track);
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    border-radius:999px;
+    transition:width .6s ease;
+}
+
+.progress-bar.green{
+    background:linear-gradient(90deg,#059669 0%,#34D399 100%);
+}
+
+.progress-bar.blue{
+    background:linear-gradient(90deg,#2563EB 0%,#3B82F6 100%);
+}
+
+.progress-hint{
+    font-size:10px;
+    color:var(--text-s);
+    white-space:nowrap;
+}
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+.stat-card{
+    animation:fadeUp .4s ease forwards;
+}
+
+.stat-card:nth-child(2){ animation-delay:.06s; }
+.stat-card:nth-child(3){ animation-delay:.12s; }
+
+@keyframes fadeUp{
+    from{ opacity:0; transform:translateY(8px); }
+    to  { opacity:1; transform:translateY(0); }
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:900px){
+    .stats-row-training{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+}

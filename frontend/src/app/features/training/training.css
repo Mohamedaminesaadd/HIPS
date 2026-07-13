@@ -1,0 +1,75 @@
+:host {
+
+    display: block;
+
+    width: 100%;
+
+    padding: 24px;
+
+    box-sizing: border-box;
+}
+
+/* ==========================================
+   PAGE
+========================================== */
+
+:host {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 24px;
+}
+
+/* ==========================================
+   COMPONENTS
+========================================== */
+
+app-stats-row-training,
+
+app-plateau-alert,
+
+app-exercise-log {
+
+    display: block;
+
+    width: 100%;
+}
+
+/* ==========================================
+   ANIMATION
+========================================== */
+
+app-stats-row-training {
+
+    animation: fadeUp .3s ease;
+}
+
+app-plateau-alert {
+
+    animation: fadeUp .4s ease;
+}
+
+app-exercise-log {
+
+    animation: fadeUp .5s ease;
+}
+
+@keyframes fadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(15px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+
+}

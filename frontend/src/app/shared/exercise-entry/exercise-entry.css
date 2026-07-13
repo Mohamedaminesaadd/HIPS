@@ -1,0 +1,409 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* ==========================================================
+   VARIABLES — thème HPIS (navy / teal)
+========================================================== */
+
+:host {
+  --card-bg:      #0F1A2E;
+  --card-bg-alt:  #0B1424;
+  --border:       rgba(148, 163, 184, 0.10);
+  --divider:      rgba(148, 163, 184, 0.07);
+  --text-h:       #F1F5F9;
+  --text-s:       #94A3B8;
+  --text-m:       #64748B;
+  --teal:         #2DD4BF;
+  --teal-bg:      rgba(45, 212, 191, 0.12);
+  --teal-border:  rgba(45, 212, 191, 0.30);
+  --green:        #34D399;
+  --green-bg:     rgba(52, 211, 153, 0.14);
+  --blue:         #2563EB;
+  --track:        rgba(148, 163, 184, 0.12);
+}
+
+/* ==========================================================
+   CONTAINER
+========================================================== */
+
+.exercise-log {
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.exercise-item {
+  border-bottom: 1px solid var(--divider);
+}
+
+.exercise-item:last-child {
+  border-bottom: none;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.exercise-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.exercise-header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.chevron {
+  color: var(--text-s);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.exercise-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+.top-set-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--teal);
+  background: var(--teal-bg);
+  border: 1px solid var(--teal-border);
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.header-right {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-s);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   BODY
+========================================================== */
+
+.exercise-body {
+  padding: 4px 20px 20px;
+}
+
+/* ==========================================================
+   SETS TABLE
+========================================================== */
+
+.sets-table {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 32px 1.3fr 1fr 1fr 1.3fr 70px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 6px;
+}
+
+.table-header {
+  border-bottom: 1px solid var(--divider);
+}
+
+.table-header .col-num,
+.table-header .col-charge,
+.table-header .col-reps,
+.table-header .col-rpe,
+.table-header .col-velocity {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-m);
+}
+
+.table-row {
+  border-bottom: 1px solid var(--divider);
+  transition: background .2s ease;
+}
+
+.table-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row .col-num,
+.table-row .col-charge,
+.table-row .col-reps,
+.table-row .col-rpe,
+.table-row .col-velocity {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.table-row .col-num {
+  font-weight: 600;
+  color: var(--text-m);
+}
+
+.table-row.is-warmup .col-charge,
+.table-row.is-warmup .col-reps,
+.table-row.is-warmup .col-rpe,
+.table-row.is-warmup .col-velocity {
+  color: var(--text-m);
+  font-weight: 500;
+}
+
+.col-status {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.status-warmup {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--text-m);
+}
+
+.status-pr {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: var(--green);
+  background: var(--green-bg);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* ==========================================================
+   1RM CHART CARD
+========================================================== */
+
+.rm-chart-card {
+  background: var(--card-bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px 14px;
+}
+
+.rm-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.rm-chart-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-s);
+}
+
+.rm-chart-formula {
+  font-size: 11px;
+  color: var(--text-m);
+}
+
+.rm-chart-svg {
+  display: block;
+  width: 100%;
+  height: 110px;
+}
+
+.rm-chart-line {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rm-chart-marker-halo {
+  fill: rgba(45, 212, 191, 0.18);
+}
+
+.rm-chart-marker-dot {
+  fill: var(--card-bg-alt);
+  stroke: var(--teal);
+  stroke-width: 2.5;
+}
+
+.rm-chart-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.axis-label {
+  font-size: 11px;
+  color: var(--text-m);
+}
+
+/* ==========================================================
+   1RM PROGRESS ROW
+========================================================== */
+
+.rm-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.rm-progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+.rm-progress-wrap {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.rm-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--teal) 100%);
+  transition: width .6s ease;
+}
+
+.rm-progress-hint {
+  font-size: 12px;
+  color: var(--text-s);
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 700px) {
+
+  .exercise-header {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+  }
+
+  .exercise-body {
+    padding: 4px 16px 16px;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 24px 1fr 0.7fr 0.7fr 1fr 44px;
+    gap: 4px;
+    padding: 10px 2px;
+  }
+
+  .table-header .col-num, .table-header .col-charge, .table-header .col-reps,
+  .table-header .col-rpe, .table-header .col-velocity,
+  .table-row .col-num, .table-row .col-charge, .table-row .col-reps,
+  .table-row .col-rpe, .table-row .col-velocity {
+    font-size: 12px;
+  }
+
+  .rm-progress-row {
+    flex-wrap: wrap;
+  }
+
+  .rm-progress-wrap {
+    order: 3;
+    width: 100%;
+  }
+
+  .rm-progress-hint {
+    order: 2;
+  }
+}
+
+/* =====================================================
+   ACTIONS
+====================================================== */
+
+.exercise-actions{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-top:24px;
+}
+
+.add-exercise-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:12px 22px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#EEF6FF;
+
+    color:#2563EB;
+
+    font-size:.95rem;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.add-exercise-btn:hover{
+
+    background:#DBEAFE;
+
+    transform:translateY(-2px);
+}
+
+.add-exercise-btn mat-icon{
+
+    font-size:22px;
+}

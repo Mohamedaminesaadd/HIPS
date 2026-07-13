@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { Sidebar } from './components/sidebar/sidebar';
 import { Header } from './components/header/header';
 import { Dashboard } from "../features/dashboard/dashboard";
+import { Training } from "../features/training/training";
 
 @Component({
   selector: 'app-layout',
@@ -14,7 +15,8 @@ import { Dashboard } from "../features/dashboard/dashboard";
     RouterOutlet,
     Sidebar,
     Header,
-    Dashboard
+    Dashboard,
+    Training
 ]
 })
 export class Layout {

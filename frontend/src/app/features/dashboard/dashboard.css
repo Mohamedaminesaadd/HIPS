@@ -19,8 +19,9 @@ app-stats-row {
   display: grid;
   grid-template-columns: 60% 40%;
   gap: 24px;
-  width: 100%;
+  width: 98.3%;
   align-items: start; /* Évite que les colonnes se forcent à avoir la même hauteur */
+  
 }
 
 /* ===========================================

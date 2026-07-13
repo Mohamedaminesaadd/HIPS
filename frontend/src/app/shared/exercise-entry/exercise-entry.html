@@ -1,0 +1,264 @@
+<!-- =====================================================
+     EXERCISE LOG
+====================================================== -->
+
+<div class="exercise-log">
+
+  <!-- =====================================================
+       EXERCISES
+  ====================================================== -->
+
+  <div
+    class="exercise-item"
+    *ngFor="let exercise of exercises"
+    [class.expanded]="exercise.expanded">
+
+    <!-- Header -->
+
+    <div
+      class="exercise-header"
+      matRipple
+      (click)="toggle(exercise)">
+
+      <div class="header-left">
+
+        <mat-icon class="chevron">
+          {{ exercise.expanded ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+
+        <span class="exercise-name">
+          {{ exercise.name }}
+        </span>
+
+        <span class="top-set-badge">
+          {{ exercise.topSet }}
+        </span>
+
+      </div>
+
+      <div class="header-right">
+
+        {{ exercise.totalVolume | number:'1.0-0':'fr' }} kg
+
+      </div>
+
+    </div>
+
+    <!-- =====================================================
+         BODY
+    ====================================================== -->
+
+    <div
+      class="exercise-body"
+      *ngIf="exercise.expanded">
+
+      <!-- =========================
+           TABLE
+      ========================== -->
+
+      <div
+        class="sets-table"
+        *ngIf="exercise.sets?.length">
+
+        <div class="table-header">
+
+          <span class="col-num">#</span>
+
+          <span class="col-charge">
+            Charge (kg)
+          </span>
+
+          <span class="col-reps">
+            Reps
+          </span>
+
+          <span class="col-rpe">
+            RPE
+          </span>
+
+          <span class="col-velocity">
+            Vélocité est.
+          </span>
+
+          <span class="col-status"></span>
+
+        </div>
+
+        <div
+          class="table-row"
+          *ngFor="let set of exercise.sets"
+          [class.is-warmup]="set.status === 'warmup'">
+
+          <span class="col-num">
+            {{ set.setNumber }}
+          </span>
+
+          <span class="col-charge">
+            {{ set.weight }}
+          </span>
+
+          <span class="col-reps">
+            {{ set.reps }}
+          </span>
+
+          <span class="col-rpe">
+            {{ set.rpe ?? '—' }}
+          </span>
+
+          <span class="col-velocity">
+            {{ set.velocity }} m/s
+          </span>
+
+          <span class="col-status">
+
+            <span
+              class="status-warmup"
+              *ngIf="set.status === 'warmup'">
+
+              ÉCH.
+
+            </span>
+
+            <span
+              class="status-pr"
+              *ngIf="set.status === 'pr'">
+
+              PR
+
+            </span>
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- =========================
+           CHART
+      ========================== -->
+
+      <div
+        class="rm-chart-card"
+        *ngIf="exercise.oneRmHistory?.length">
+
+        <div class="rm-chart-header">
+
+          <span class="rm-chart-title">
+
+            1RM estimé — 3 mois
+
+          </span>
+
+          <span class="rm-chart-formula">
+
+            Epley : 1RM = charge × (1 + reps / 30)
+
+          </span>
+
+        </div>
+
+        <svg
+          class="rm-chart-svg"
+          viewBox="0 0 1000 120"
+          preserveAspectRatio="none">
+
+          <path
+            [attr.d]="getSmoothPath(exercise)"
+            class="rm-chart-line">
+
+          </path>
+
+          <ng-container *ngIf="getLastPoint(exercise) as lastPoint">
+
+            <circle
+              [attr.cx]="lastPoint.x"
+              [attr.cy]="lastPoint.y"
+              r="9"
+              class="rm-chart-marker-halo">
+            </circle>
+
+            <circle
+              [attr.cx]="lastPoint.x"
+              [attr.cy]="lastPoint.y"
+              r="5"
+              class="rm-chart-marker-dot">
+            </circle>
+
+          </ng-container>
+
+        </svg>
+
+        <div class="rm-chart-axis">
+
+          <span
+            class="axis-label"
+            *ngFor="let label of getAxisLabels(exercise)">
+
+            {{ label }}
+
+          </span>
+
+        </div>
+
+        <div class="rm-progress-row">
+
+          <span class="rm-progress-label">
+
+            1RM estimé :
+            {{ exercise.oneRmEstimated }} kg
+
+          </span>
+
+          <div class="rm-progress-wrap">
+
+            <div
+              class="rm-progress-bar"
+              [style.width.%]="getOneRmPercent(exercise)">
+            </div>
+
+          </div>
+
+          <span class="rm-progress-hint">
+
+            {{ getOneRmPercent(exercise) }} %
+            de l'objectif de bloc
+            ({{ exercise.blockGoal }} kg)
+
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =====================================================
+       ADD EXERCISE
+  ====================================================== -->
+
+  <div class="exercise-actions">
+
+    <button
+      class="add-exercise-btn"
+      matRipple
+      (click)="openAddExerciseDialog()">
+
+      <mat-icon>
+
+        add
+
+      </mat-icon>
+
+      <span>
+
+        Ajouter un exercice
+
+      </span>
+
+    </button>
+
+  </div>
+
+</div>
