@@ -1,264 +1,247 @@
 <!-- =====================================================
      EXERCISE LOG
 ====================================================== -->
-
 <div class="exercise-log">
-
-  <!-- =====================================================
-       EXERCISES
-  ====================================================== -->
 
   <div
     class="exercise-item"
     *ngFor="let exercise of exercises"
     [class.expanded]="exercise.expanded">
 
-    <!-- Header -->
-
-    <div
-      class="exercise-header"
-      matRipple
-      (click)="toggle(exercise)">
+    <!-- ══════════ HEADER ══════════ -->
+    <div class="exercise-header" matRipple (click)="toggle(exercise)">
 
       <div class="header-left">
-
         <mat-icon class="chevron">
           {{ exercise.expanded ? 'expand_less' : 'expand_more' }}
         </mat-icon>
 
-        <span class="exercise-name">
-          {{ exercise.name }}
+        <!-- Badge muscle -->
+        <span
+          class="muscle-badge"
+          [style.--m-color]="muscleInfo(exercise.muscle).color"
+          [title]="muscleInfo(exercise.muscle).label">
+          <mat-icon>{{ muscleInfo(exercise.muscle).icon }}</mat-icon>
         </span>
 
-        <span class="top-set-badge">
+        <!-- Nom (lecture ou édition) -->
+        <ng-container *ngIf="!exercise.editing; else nameEdit">
+          <span class="exercise-name">{{ exercise.name }}</span>
+        </ng-container>
+        <ng-template #nameEdit>
+          <input
+            #nameInput
+            class="name-input"
+            type="text"
+            [value]="exercise.name"
+            (click)="$event.stopPropagation()"
+            (keyup.enter)="confirmRename(exercise, nameInput.value)"
+            (keyup.escape)="exercise.editing = false"
+            (blur)="confirmRename(exercise, nameInput.value)" />
+        </ng-template>
+
+        <span class="top-set-badge" *ngIf="exercise.topSet">
           {{ exercise.topSet }}
         </span>
-
       </div>
 
       <div class="header-right">
+        <span class="volume" *ngIf="exercise.totalVolume > 0">
+          {{ exercise.totalVolume.toLocaleString('fr-FR') }} kg
+        </span>
 
-        {{ exercise.totalVolume | number:'1.0-0':'fr' }} kg
-
+        <!-- Actions exercice -->
+        <button class="hdr-btn" title="Renommer" (click)="startRename(exercise, $event)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button class="hdr-btn del" title="Supprimer" (click)="deleteExercise(exercise, $event)">
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
-
     </div>
 
-    <!-- =====================================================
-         BODY
-    ====================================================== -->
+    <!-- ══════════ BODY ══════════ -->
+    <div class="exercise-body" *ngIf="exercise.expanded">
 
-    <div
-      class="exercise-body"
-      *ngIf="exercise.expanded">
-
-      <!-- =========================
-           TABLE
-      ========================== -->
-
-      <div
-        class="sets-table"
-        *ngIf="exercise.sets?.length">
+      <!-- ─── TABLE DES SÉRIES ─── -->
+      <div class="sets-table" *ngIf="exercise.sets?.length; else emptySets">
 
         <div class="table-header">
-
           <span class="col-num">#</span>
-
-          <span class="col-charge">
-            Charge (kg)
-          </span>
-
-          <span class="col-reps">
-            Reps
-          </span>
-
-          <span class="col-rpe">
-            RPE
-          </span>
-
-          <span class="col-velocity">
-            Vélocité est.
-          </span>
-
+          <span class="col-charge">Charge (kg)</span>
+          <span class="col-reps">Reps</span>
+          <span class="col-rpe">RPE</span>
+          <span class="col-velocity">Vélocité est.</span>
           <span class="col-status"></span>
-
+          <span class="col-actions"></span>
         </div>
 
-        <div
-          class="table-row"
-          *ngFor="let set of exercise.sets"
-          [class.is-warmup]="set.status === 'warmup'">
+        <ng-container *ngFor="let set of exercise.sets">
 
-          <span class="col-num">
-            {{ set.setNumber }}
-          </span>
+          <!-- Ligne lecture -->
+          <div
+            class="table-row"
+            *ngIf="editingSet !== set"
+            [class.is-warmup]="set.status === 'warmup'">
 
-          <span class="col-charge">
-            {{ set.weight }}
-          </span>
+            <span class="col-num">{{ set.setNumber }}</span>
+            <span class="col-charge">{{ set.weight }}</span>
+            <span class="col-reps">{{ set.reps }}</span>
+            <span class="col-rpe">{{ set.rpe ?? '—' }}</span>
+            <span class="col-velocity">{{ set.velocity }} m/s</span>
 
-          <span class="col-reps">
-            {{ set.reps }}
-          </span>
-
-          <span class="col-rpe">
-            {{ set.rpe ?? '—' }}
-          </span>
-
-          <span class="col-velocity">
-            {{ set.velocity }} m/s
-          </span>
-
-          <span class="col-status">
-
-            <span
-              class="status-warmup"
-              *ngIf="set.status === 'warmup'">
-
-              ÉCH.
-
+            <span class="col-status">
+              <span class="status-warmup" *ngIf="set.status === 'warmup'">ÉCH.</span>
+              <span class="status-pr" *ngIf="set.status === 'pr'">PR</span>
             </span>
 
-            <span
-              class="status-pr"
-              *ngIf="set.status === 'pr'">
-
-              PR
-
+            <span class="col-actions">
+              <button class="row-btn" title="Modifier" (click)="startEditSet(exercise, set)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="row-btn del" title="Supprimer" (click)="deleteSet(exercise, set)">
+                <mat-icon>close</mat-icon>
+              </button>
             </span>
+          </div>
 
+          <!-- Ligne édition -->
+          <div class="table-row edit-row" *ngIf="editingSet === set">
+            <span class="col-num">{{ set.setNumber }}</span>
+            <input class="cell-input" type="number" [(ngModel)]="draft.weight" placeholder="kg" />
+            <input class="cell-input" type="number" [(ngModel)]="draft.reps" placeholder="reps" />
+            <input class="cell-input" type="text" [(ngModel)]="draft.rpe" placeholder="RPE" />
+            <input class="cell-input" type="text" [(ngModel)]="draft.velocity" placeholder="m/s" />
+            <select class="cell-input" [(ngModel)]="draft.status">
+              <option [ngValue]="null">—</option>
+              <option value="warmup">Éch.</option>
+              <option value="pr">PR</option>
+            </select>
+            <span class="col-actions">
+              <button class="row-btn ok" title="Valider" (click)="saveSet(exercise)">
+                <mat-icon>check</mat-icon>
+              </button>
+              <button class="row-btn" title="Annuler" (click)="cancelSetEdit()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </span>
+          </div>
+
+        </ng-container>
+
+        <!-- Ligne ajout -->
+        <div class="table-row edit-row" *ngIf="addingIn === exercise">
+          <span class="col-num">{{ (exercise.sets?.length ?? 0) + 1 }}</span>
+          <input class="cell-input" type="number" [(ngModel)]="draft.weight" placeholder="kg" />
+          <input class="cell-input" type="number" [(ngModel)]="draft.reps" placeholder="reps" />
+          <input class="cell-input" type="text" [(ngModel)]="draft.rpe" placeholder="RPE" />
+          <input class="cell-input" type="text" [(ngModel)]="draft.velocity" placeholder="m/s" />
+          <select class="cell-input" [(ngModel)]="draft.status">
+            <option [ngValue]="null">—</option>
+            <option value="warmup">Éch.</option>
+            <option value="pr">PR</option>
+          </select>
+          <span class="col-actions">
+            <button class="row-btn ok" title="Valider" (click)="saveSet(exercise)">
+              <mat-icon>check</mat-icon>
+            </button>
+            <button class="row-btn" title="Annuler" (click)="cancelSetEdit()">
+              <mat-icon>close</mat-icon>
+            </button>
           </span>
-
         </div>
 
+        <!-- Ajouter une série -->
+        <button
+          class="add-set-btn"
+          *ngIf="addingIn !== exercise"
+          (click)="startAddSet(exercise)">
+          <mat-icon>add</mat-icon>
+          Ajouter une série
+        </button>
       </div>
 
-      <!-- =========================
-           CHART
-      ========================== -->
-
-      <div
-        class="rm-chart-card"
-        *ngIf="exercise.oneRmHistory?.length">
-
-        <div class="rm-chart-header">
-
-          <span class="rm-chart-title">
-
-            1RM estimé — 3 mois
-
-          </span>
-
-          <span class="rm-chart-formula">
-
-            Epley : 1RM = charge × (1 + reps / 30)
-
-          </span>
-
+      <!-- ─── ÉTAT VIDE + IA ─── -->
+      <ng-template #emptySets>
+        <div class="empty-sets" *ngIf="addingIn !== exercise; else addFirstSet">
+          <mat-icon class="empty-icon">fitness_center</mat-icon>
+          <p class="empty-text">
+            Aucune série enregistrée pour cet exercice.
+          </p>
+          <div class="empty-actions">
+            <button class="plan-btn" (click)="planWithAI(exercise)">
+              <mat-icon>smart_toy</mat-icon>
+              Générer avec l'IA
+            </button>
+            <button class="add-set-btn solo" (click)="startAddSet(exercise)">
+              <mat-icon>add</mat-icon>
+              Ajouter une série
+            </button>
+          </div>
         </div>
 
-        <svg
-          class="rm-chart-svg"
-          viewBox="0 0 1000 120"
-          preserveAspectRatio="none">
+        <!-- Formulaire première série -->
+        <ng-template #addFirstSet>
+          <div class="sets-table">
+            <div class="table-row edit-row">
+              <span class="col-num">1</span>
+              <input class="cell-input" type="number" [(ngModel)]="draft.weight" placeholder="kg" />
+              <input class="cell-input" type="number" [(ngModel)]="draft.reps" placeholder="reps" />
+              <input class="cell-input" type="text" [(ngModel)]="draft.rpe" placeholder="RPE" />
+              <input class="cell-input" type="text" [(ngModel)]="draft.velocity" placeholder="m/s" />
+              <select class="cell-input" [(ngModel)]="draft.status">
+                <option [ngValue]="null">—</option>
+                <option value="warmup">Éch.</option>
+                <option value="pr">PR</option>
+              </select>
+              <span class="col-actions">
+                <button class="row-btn ok" (click)="saveSet(exercise)"><mat-icon>check</mat-icon></button>
+                <button class="row-btn" (click)="cancelSetEdit()"><mat-icon>close</mat-icon></button>
+              </span>
+            </div>
+          </div>
+        </ng-template>
+      </ng-template>
 
-          <path
-            [attr.d]="getSmoothPath(exercise)"
-            class="rm-chart-line">
+      <!-- ─── CHART 1RM (inchangé) ─── -->
+      <div class="rm-chart-card" *ngIf="exercise.oneRmHistory?.length">
+        <div class="rm-chart-header">
+          <span class="rm-chart-title">1RM estimé — 3 mois</span>
+          <span class="rm-chart-formula">Epley : 1RM = charge × (1 + reps / 30)</span>
+        </div>
 
-          </path>
-
+        <svg class="rm-chart-svg" viewBox="0 0 1000 120" preserveAspectRatio="none">
+          <path [attr.d]="getSmoothPath(exercise)" class="rm-chart-line"></path>
           <ng-container *ngIf="getLastPoint(exercise) as lastPoint">
-
-            <circle
-              [attr.cx]="lastPoint.x"
-              [attr.cy]="lastPoint.y"
-              r="9"
-              class="rm-chart-marker-halo">
-            </circle>
-
-            <circle
-              [attr.cx]="lastPoint.x"
-              [attr.cy]="lastPoint.y"
-              r="5"
-              class="rm-chart-marker-dot">
-            </circle>
-
+            <circle [attr.cx]="lastPoint.x" [attr.cy]="lastPoint.y" r="9" class="rm-chart-marker-halo"></circle>
+            <circle [attr.cx]="lastPoint.x" [attr.cy]="lastPoint.y" r="5" class="rm-chart-marker-dot"></circle>
           </ng-container>
-
         </svg>
 
         <div class="rm-chart-axis">
-
-          <span
-            class="axis-label"
-            *ngFor="let label of getAxisLabels(exercise)">
-
-            {{ label }}
-
-          </span>
-
+          <span class="axis-label" *ngFor="let label of getAxisLabels(exercise)">{{ label }}</span>
         </div>
 
         <div class="rm-progress-row">
-
-          <span class="rm-progress-label">
-
-            1RM estimé :
-            {{ exercise.oneRmEstimated }} kg
-
-          </span>
-
+          <span class="rm-progress-label">1RM estimé : {{ exercise.oneRmEstimated }} kg</span>
           <div class="rm-progress-wrap">
-
-            <div
-              class="rm-progress-bar"
-              [style.width.%]="getOneRmPercent(exercise)">
-            </div>
-
+            <div class="rm-progress-bar" [style.width.%]="getOneRmPercent(exercise)"></div>
           </div>
-
           <span class="rm-progress-hint">
-
-            {{ getOneRmPercent(exercise) }} %
-            de l'objectif de bloc
-            ({{ exercise.blockGoal }} kg)
-
+            {{ getOneRmPercent(exercise) }} % de l'objectif de bloc ({{ exercise.blockGoal }} kg)
           </span>
-
         </div>
-
       </div>
 
     </div>
-
   </div>
 
-  <!-- =====================================================
-       ADD EXERCISE
-  ====================================================== -->
-
+  <!-- ══════════ ADD EXERCISE ══════════ -->
   <div class="exercise-actions">
-
-    <button
-      class="add-exercise-btn"
-      matRipple
-      (click)="openAddExerciseDialog()">
-
-      <mat-icon>
-
-        add
-
-      </mat-icon>
-
-      <span>
-
-        Ajouter un exercice
-
-      </span>
-
+    <button class="add-exercise-btn" matRipple (click)="openAddExerciseDialog()">
+      <mat-icon>add</mat-icon>
+      <span>Ajouter un exercice</span>
     </button>
-
   </div>
 
 </div>

@@ -12,6 +12,7 @@ Dépendances :  pip install websocket-client pyqtgraph pyqt6 scipy numpy
 
 """
 
+
 import websocket
 import threading
 import json

@@ -1,62 +1,72 @@
 /* ==========================================================
    VARIABLES — thème HPIS (navy / teal)
 ========================================================== */
-
 :host{
-    --card-bg:      #0F1A2E;
-    --card-bg-hover:#141E33;
-    --border:       rgba(148, 163, 184, 0.10);
-    --border-hover: rgba(148, 163, 184, 0.20);
-    --text-h:       #F1F5F9;
-    --text-s:       #94A3B8;
-    --text-m:       #64748B;
-    --track:        rgba(148, 163, 184, 0.12);
+    --card-bg:       #0F1A2E;
+    --card-bg-hover: #14203A;
+    --border:        rgba(148, 163, 184, 0.10);
+    --border-hover:  rgba(148, 163, 184, 0.22);
+    --text-h:        #F1F5F9;
+    --text-s:        #94A3B8;
+    --text-m:        #64748B;
+    --track:         rgba(148, 163, 184, 0.12);
+    --green:         #34D399;
+    --blue:          #3B82F6;
+    display:block;
 }
 
 /* ==========================================================
    ROW
 ========================================================== */
-
 .stats-row-training{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
     margin-bottom:16px;
 }
 
 /* ==========================================================
-   CARD - TRÈS COMPACTE
+   CARD
 ========================================================== */
-
 .stat-card{
+    position:relative;
     display:flex;
     flex-direction:column;
-    gap:6px;
-    padding:12px 14px;
+    gap:10px;
+    padding:16px 18px;
+    min-height:120px;
     background:var(--card-bg);
     border:1px solid var(--border);
-    border-radius:12px;
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        border-color .25s ease,
-        background .25s ease;
+    border-radius:14px;
+    overflow:hidden;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
     cursor:pointer;
 }
 
+.stat-card::before{
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height:2px;
+    background:linear-gradient(90deg, #2563EB 0%, #06B6D4 100%);
+    opacity:0;
+    transition:opacity .25s ease;
+}
+
 .stat-card:hover{
-    transform:translateY(-2px);
+    transform:translateY(-3px);
     background:var(--card-bg-hover);
     border-color:var(--border-hover);
-    box-shadow:0 10px 22px rgba(0,0,0,.32);
+    box-shadow:0 12px 26px rgba(0,0,0,.35);
 }
+
+.stat-card:hover::before{ opacity:1; }
 
 /* ==========================================================
    LABEL
 ========================================================== */
-
 .stat-label{
-    font-size:10px;
+    font-size:10.5px;
     letter-spacing:.07em;
     text-transform:uppercase;
     font-weight:700;
@@ -66,49 +76,63 @@
 /* ==========================================================
    VALUE
 ========================================================== */
-
 .stat-value{
-    font-size:22px;
+    font-size:26px;
     font-weight:800;
     color:var(--text-h);
-    line-height:1.1;
+    line-height:1;
+    letter-spacing:-.5px;
+    font-variant-numeric:tabular-nums;
 }
 
 .stat-value span{
     margin-left:4px;
-    font-size:12px;
+    font-size:13px;
     font-weight:600;
     color:var(--text-s);
+    letter-spacing:0;
 }
 
 /* ==========================================================
    TREND
 ========================================================== */
-
 .trend{
-    font-size:10px;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    align-self:flex-start;
+    padding:4px 9px;
+    border-radius:999px;
+    font-size:10.5px;
     font-weight:600;
-    color:#34D399;
+    background:rgba(52,211,153,.12);
+    color:var(--green);
+}
+
+.trend mat-icon{
+    font-size:14px;
+    width:14px;
+    height:14px;
 }
 
 .trend-down{
+    background:rgba(248,113,113,.12);
     color:#F87171;
 }
 
 /* ==========================================================
-   PROGRESS
+   PROGRESS — collée en bas
 ========================================================== */
-
 .progress-row{
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:10px;
+    margin-top:auto;
 }
 
 .progress-wrap{
     flex:1;
-    width:100%;
-    height:4px;
+    height:5px;
     border-radius:999px;
     background:var(--track);
     overflow:hidden;
@@ -117,33 +141,34 @@
 .progress-bar{
     height:100%;
     border-radius:999px;
-    transition:width .6s ease;
+    transition:width .8s cubic-bezier(.4,0,.2,1);
 }
 
 .progress-bar.green{
-    background:linear-gradient(90deg,#059669 0%,#34D399 100%);
+    background:linear-gradient(90deg, #059669 0%, #34D399 100%);
+    box-shadow:0 0 8px rgba(52,211,153,.35);
 }
 
 .progress-bar.blue{
-    background:linear-gradient(90deg,#2563EB 0%,#3B82F6 100%);
+    background:linear-gradient(90deg, #2563EB 0%, #3B82F6 100%);
+    box-shadow:0 0 8px rgba(59,130,246,.35);
 }
 
 .progress-hint{
-    font-size:10px;
+    font-size:10.5px;
+    font-weight:500;
     color:var(--text-s);
     white-space:nowrap;
 }
 
 /* ==========================================================
-   ANIMATION
+   ANIMATION — sûre
 ========================================================== */
-
-.stat-card{
-    animation:fadeUp .4s ease forwards;
+@media (prefers-reduced-motion: no-preference){
+    .stat-card{ animation:fadeUp .4s ease both; }
+    .stat-card:nth-child(2){ animation-delay:.06s; }
+    .stat-card:nth-child(3){ animation-delay:.12s; }
 }
-
-.stat-card:nth-child(2){ animation-delay:.06s; }
-.stat-card:nth-child(3){ animation-delay:.12s; }
 
 @keyframes fadeUp{
     from{ opacity:0; transform:translateY(8px); }
@@ -153,10 +178,7 @@
 /* ==========================================================
    RESPONSIVE
 ========================================================== */
-
 @media(max-width:900px){
-    .stats-row-training{
-        grid-template-columns:1fr;
-        gap:10px;
-    }
+    .stats-row-training{ grid-template-columns:1fr; gap:12px; }
+    .stat-card{ min-height:auto; }
 }

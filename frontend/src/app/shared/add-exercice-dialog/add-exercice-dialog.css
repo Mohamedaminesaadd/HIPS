@@ -1,13 +1,161 @@
-mat-form-field{
-
-    width:100%;
-
-    margin-top:10px;
+:host{
+  --bg:#0F1A2E;
+  --surface:#182235;
+  --border:rgba(148,163,184,.14);
+  --text-h:#F1F5F9;
+  --text-s:#94A3B8;
+  --primary:#2563EB;
+  --secondary:#06B6D4;
+  display:block;
 }
 
-mat-dialog-content{
+.dlg{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:22px;
+  background:var(--bg);
+  border-radius:16px;
+  min-width:420px;
+}
 
-    width:400px;
+.dlg-title{
+  margin:0 0 4px;
+  font-size:1.25rem;
+  font-weight:800;
+  color:var(--text-h);
+  letter-spacing:-.3px;
+}
 
-    max-width:100%;
+.dlg-label{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--text-s);
+}
+
+.dlg-input{
+  height:44px;
+  padding:0 14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text-h);
+  font-size:.95rem;
+  font-family:inherit;
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+}
+
+.dlg-input::placeholder{ color:#64748B; }
+
+.dlg-input:focus{
+  border-color:var(--secondary);
+  box-shadow:0 0 0 3px rgba(6,182,212,.15);
+}
+
+/* ── Grille des muscles ── */
+.muscle-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:10px;
+}
+
+.muscle-chip{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding:12px 6px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text-s);
+  font-size:.75rem;
+  font-weight:600;
+  font-family:inherit;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.muscle-chip mat-icon{
+  font-size:22px;
+  width:22px;
+  height:22px;
+  color:var(--m-color);
+  opacity:.75;
+  transition:.2s;
+}
+
+.muscle-chip:hover{
+  border-color:var(--m-color);
+  color:var(--text-h);
+}
+
+.muscle-chip.selected{
+  border-color:var(--m-color);
+  background:color-mix(in srgb, var(--m-color) 14%, transparent);
+  color:var(--text-h);
+  box-shadow:0 0 0 1px var(--m-color);
+}
+
+.muscle-chip.selected mat-icon{ opacity:1; }
+
+/* ── Actions ── */
+.dlg-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:6px;
+}
+
+.btn-ghost{
+  padding:10px 18px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:transparent;
+  color:var(--text-s);
+  font-weight:600;
+  font-family:inherit;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.btn-ghost:hover{ color:var(--text-h); border-color:rgba(148,163,184,.3); }
+
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, var(--primary), var(--secondary));
+  color:#fff;
+  font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.btn-primary:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(37,99,235,.35);
+}
+
+.btn-primary:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.btn-primary mat-icon{
+  font-size:18px;
+  width:18px;
+  height:18px;
+}
+
+@media(max-width:520px){
+  .dlg{ min-width:0; }
+  .muscle-grid{ grid-template-columns:repeat(2,1fr); }
 }

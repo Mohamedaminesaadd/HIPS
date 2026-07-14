@@ -7,6 +7,7 @@ import { Dashboard } from "../features/dashboard/dashboard";
 import { Training } from "../features/training/training";
 import { Nutrition } from "../features/nutrition/nutrition";
 
+
 @Component({
   selector: 'app-layout',
   standalone: true,
@@ -15,20 +16,15 @@ import { Nutrition } from "../features/nutrition/nutrition";
   imports: [
     RouterOutlet,
     Sidebar,
-    Header,
-    Dashboard,
-    Training,
-    Nutrition
-]
+    Header
+  ]
 })
 export class Layout {
 
   isSidebarCollapsed = false;
 
-  toggleSidebar(): void {
-
+  toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
-
   }
 
 }

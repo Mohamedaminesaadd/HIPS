@@ -11,14 +11,45 @@ import { NutritionStats } from './shared/nutrition-stats/nutrition-stats';
 import { MealLog } from './shared/meal-log/meal-log';
 import { NutritionAlerts } from './shared/nutrition-alerts/nutrition-alerts';
 import { Nutrition } from './features/nutrition/nutrition';
+import { Training } from './features/training/training';
+
+
 
 export const routes: Routes = [
-      {path: 'login', component: Login},
-      {path: 'sidbar', component: Sidebar},
-      {path: 'header', component: Header},
-      {path: 'layout', component: Layout},
-      {path: 'dashboard', component: Dashboard},
-      {path: 'palteauAlert',component: PlateauAlertComponent},
-      {path: 'stateTraning',component:ExerciseLog},
-      {path: 'test',component:Nutrition }
+
+  {
+    path: 'login',
+    component: Login
+  },
+
+  {
+    path: '',
+    component: Layout,
+
+    children: [
+
+      {
+        path: 'dashboard',
+        component: Dashboard
+      },
+
+      {
+        path: 'training',
+        component: Training
+      },
+
+      {
+        path: 'nutrition',
+        component: Nutrition
+      },
+
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+
+    ]
+  }
+
 ];

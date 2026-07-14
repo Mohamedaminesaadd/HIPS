@@ -1,267 +1,77 @@
 <!-- =====================================================
      MEAL ITEM
 ====================================================== -->
+<div class="meal-item" [class.expanded]="meal.expanded" [style.--accent]="meal.accent">
 
-<div
-  class="meal-item"
-  [class.expanded]="meal.expanded">
-
-  <!-- ==========================================
-       HEADER
-  =========================================== -->
-
-  <div
-    class="meal-header"
-    matRipple
-    (click)="toggle()">
+  <!-- HEADER -->
+  <div class="meal-header" matRipple (click)="toggle()">
 
     <div class="header-left">
-
       <mat-icon class="chevron">
-
         {{ meal.expanded ? 'expand_less' : 'expand_more' }}
-
       </mat-icon>
 
       <div class="meal-icon">
-
-        <mat-icon>
-
-          {{ meal.icon }}
-
-        </mat-icon>
-
+        <mat-icon>{{ meal.icon }}</mat-icon>
       </div>
 
-      <div class="meal-info">
-
-        <div class="meal-name">
-
-          {{ meal.name }}
-
-        </div>
-
-        <div class="meal-time">
-
-          {{ meal.time }}
-
-        </div>
-
-      </div>
-
+      <div class="meal-name">{{ meal.name }}</div>
     </div>
 
-    <div class="header-right">
-
-      <div class="meal-calories">
-
-        {{ meal.calories }} kcal
-
-      </div>
-
-      <button
-        class="icon-btn"
-        (click)="$event.stopPropagation(); editMeal()">
-
-        <mat-icon>
-
-          edit
-
-        </mat-icon>
-
-      </button>
-
+    <div class="meal-status" [class.pending]="meal.status">
+      {{ meal.status ? meal.status : meal.calories + ' kcal' }}
     </div>
 
+    <div class="macro-pills">
+      <span class="pill pill-p"><i></i>P {{ meal.proteins }} g</span>
+      <span class="pill pill-g"><i></i>G {{ meal.carbs }} g</span>
+      <span class="pill pill-l"><i></i>L {{ meal.fats }} g</span>
+    </div>
   </div>
 
-  <!-- ==========================================
-       BODY
-  =========================================== -->
+  <!-- BODY -->
+  <div class="meal-body" *ngIf="meal.expanded">
 
-  <div
-    class="meal-body"
-    *ngIf="meal.expanded">
-
-    <!-- =======================
-         MACROS
-    ======================== -->
-
-    <div class="macro-summary">
-
-      <div class="macro-card">
-
-        <span class="macro-value">
-
-          {{ meal.proteins }} g
-
-        </span>
-
-        <span class="macro-label">
-
-          Protéines
-
-        </span>
-
-      </div>
-
-      <div class="macro-card">
-
-        <span class="macro-value">
-
-          {{ meal.carbs }} g
-
-        </span>
-
-        <span class="macro-label">
-
-          Glucides
-
-        </span>
-
-      </div>
-
-      <div class="macro-card">
-
-        <span class="macro-value">
-
-          {{ meal.fats }} g
-
-        </span>
-
-        <span class="macro-label">
-
-          Lipides
-
-        </span>
-
-      </div>
-
-    </div>
-
-    <!-- =======================
-         FOOD TABLE
-    ======================== -->
-
-    <div
-      class="food-table"
-      *ngIf="meal.foods.length">
-
-      <div class="table-header">
-
-        <span>
-
-          Aliment
-
-        </span>
-
-        <span>
-
-          Quantité
-
-        </span>
-
-        <span>
-
-          Calories
-
-        </span>
-
-        <span>
-
-          Actions
-
-        </span>
-
-      </div>
-
-      <div
-        class="table-row"
-        *ngFor="let food of meal.foods">
-
-        <span>
-
-          {{ food.name }}
-
-        </span>
-
-        <span>
-
-          {{ food.quantity }}
-
-        </span>
-
-        <span>
-
-          {{ food.calories }} kcal
-
-        </span>
-
-        <div class="actions">
-
-          <button
-            class="icon-btn"
-            (click)="editFood(food)">
-
-            <mat-icon>
-
-              edit
-
-            </mat-icon>
-
+    <!-- ── Avec aliments ── -->
+    <ng-container *ngIf="hasFoods; else emptyState">
+      <div class="food-list">
+        <div class="food-row" *ngFor="let food of meal.foods">
+          <span class="food-name">{{ food.name }}</span>
+          <span class="food-qty">{{ food.quantity }}</span>
+          <span class="food-kcal">{{ food.calories }} kcal</span>
+          <span class="food-macros">
+            P {{ food.proteins }} <em>/</em> G {{ food.carbs }} <em>/</em> L {{ food.fats }}
+          </span>
+          <button class="food-del" (click)="deleteFood(food)" title="Supprimer">
+            <mat-icon>close</mat-icon>
           </button>
-
-          <button
-            class="icon-btn delete"
-            (click)="deleteFood(food)">
-
-            <mat-icon>
-
-              delete
-
-            </mat-icon>
-
-          </button>
-
         </div>
-
       </div>
 
-    </div>
-
-    <!-- =======================
-         FOOTER
-    ======================== -->
-
-    <div class="meal-footer">
-
-      <button
-        class="add-food-btn"
-        (click)="addFood()">
-
-        <mat-icon>
-
-          add
-
-        </mat-icon>
-
+      <button class="add-food-btn" (click)="addFood()">
+        <mat-icon>add</mat-icon>
         Ajouter un aliment
-
       </button>
+    </ng-container>
 
-      <div class="meal-total">
+    <!-- ── État vide ── -->
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">restaurant</mat-icon>
 
-        Total :
-        <strong>
+        <p class="empty-text">
+          Aucun aliment enregistré. Il vous reste
+          <strong>{{ remainingKcal }} kcal</strong>,
+          <b class="hl">{{ remainingProteins }} g de protéines</b>
+          et {{ remainingCarbs }} g de glucides à couvrir.
+        </p>
 
-          {{ meal.calories }} kcal
-
-        </strong>
-
+        <button class="plan-btn" (click)="planWithAI()">
+          <mat-icon>smart_toy</mat-icon>
+          Planifier avec l'IA
+        </button>
       </div>
-
-    </div>
+    </ng-template>
 
   </div>
-
 </div>

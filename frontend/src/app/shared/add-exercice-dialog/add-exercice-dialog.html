@@ -1,44 +1,38 @@
-<h2 mat-dialog-title>
+<div class="dlg">
 
-    Ajouter un exercice
+  <h2 class="dlg-title">Ajouter un exercice</h2>
 
-</h2>
+  <!-- Nom -->
+  <label class="dlg-label">Nom de l'exercice</label>
+  <input
+    class="dlg-input"
+    type="text"
+    placeholder="Ex. Développé couché"
+    [(ngModel)]="exerciseName"
+    autofocus />
 
-<mat-dialog-content>
-
-    <mat-form-field appearance="outline">
-
-        <mat-label>
-
-            Nom de l'exercice
-
-        </mat-label>
-
-        <input
-            matInput
-            [(ngModel)]="exerciseName">
-
-    </mat-form-field>
-
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-
+  <!-- Groupe musculaire -->
+  <label class="dlg-label">Groupe musculaire</label>
+  <div class="muscle-grid">
     <button
-        mat-button
-        (click)="cancel()">
-
-        Annuler
-
+      type="button"
+      class="muscle-chip"
+      *ngFor="let m of muscles"
+      [class.selected]="selectedMuscle === m.key"
+      [style.--m-color]="m.color"
+      (click)="select(m.key)">
+      <mat-icon>{{ m.icon }}</mat-icon>
+      <span>{{ m.label }}</span>
     </button>
+  </div>
 
-    <button
-        mat-flat-button
-        color="primary"
-        (click)="save()">
-
-        Ajouter
-
+  <!-- Actions -->
+  <div class="dlg-actions">
+    <button type="button" class="btn-ghost" (click)="cancel()">Annuler</button>
+    <button type="button" class="btn-primary" [disabled]="!canSave" (click)="save()">
+      <mat-icon>add</mat-icon>
+      Ajouter
     </button>
+  </div>
 
-</mat-dialog-actions>
+</div>

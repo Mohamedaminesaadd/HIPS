@@ -6,7 +6,6 @@
 /* ==========================================================
    VARIABLES — thème HPIS (navy / teal)
 ========================================================== */
-
 :host {
   --card-bg:      #0F1A2E;
   --card-bg-alt:  #0B1424;
@@ -27,7 +26,6 @@
 /* ==========================================================
    CONTAINER
 ========================================================== */
-
 .exercise-log {
   display: flex;
   flex-direction: column;
@@ -48,13 +46,12 @@
 /* ==========================================================
    HEADER
 ========================================================== */
-
 .exercise-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 20px;
+  padding: 14px 20px;
   cursor: pointer;
   transition: background .2s ease;
 }
@@ -97,18 +94,81 @@
   white-space: nowrap;
 }
 
+/* ── Badge muscle ── */
+.muscle-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--m-color, #3B82F6) 15%, transparent);
+}
+
+.muscle-badge mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--m-color, #3B82F6);
+}
+
+/* ── Header droit + actions ── */
 .header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.volume {
   font-size: 14px;
   font-weight: 700;
   color: var(--text-s);
   white-space: nowrap;
-  flex-shrink: 0;
+  margin-right: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hdr-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-m);
+  cursor: pointer;
+  opacity: 0;
+  transition: .2s;
+}
+
+.exercise-header:hover .hdr-btn { opacity: 1; }
+
+.hdr-btn:hover { background: rgba(255,255,255,.06); color: var(--text-h); }
+.hdr-btn.del:hover { background: rgba(248,113,113,.14); color: #F87171; }
+
+.hdr-btn mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+/* ── Édition du nom ── */
+.name-input {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--teal-border);
+  background: var(--card-bg-alt);
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  outline: none;
 }
 
 /* ==========================================================
    BODY
 ========================================================== */
-
 .exercise-body {
   padding: 4px 20px 20px;
 }
@@ -116,7 +176,6 @@
 /* ==========================================================
    SETS TABLE
 ========================================================== */
-
 .sets-table {
   display: flex;
   flex-direction: column;
@@ -126,7 +185,7 @@
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 32px 1.3fr 1fr 1fr 1.3fr 70px;
+  grid-template-columns: 32px 1.2fr 0.9fr 0.9fr 1.2fr 64px 76px;
   align-items: center;
   gap: 8px;
   padding: 10px 6px;
@@ -206,10 +265,165 @@
   border-radius: 999px;
 }
 
+/* ── Actions de ligne ── */
+.col-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-m);
+  cursor: pointer;
+  opacity: 0;
+  transition: .2s;
+}
+
+.table-row:hover .row-btn,
+.edit-row .row-btn { opacity: 1; }
+
+.row-btn:hover { background: rgba(255,255,255,.06); color: var(--text-h); }
+.row-btn.del:hover { background: rgba(248,113,113,.14); color: #F87171; }
+.row-btn.ok { color: var(--green); }
+.row-btn.ok:hover { background: var(--green-bg); }
+
+.row-btn mat-icon { font-size: 15px; width: 15px; height: 15px; }
+
+/* ── Ligne édition ── */
+.edit-row {
+  background: rgba(45,212,191,.04);
+  border-radius: 8px;
+}
+
+.cell-input {
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--card-bg-alt);
+  color: var(--text-h);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+  transition: border-color .2s;
+}
+
+.cell-input:focus { border-color: var(--teal); }
+
+.cell-input::placeholder { color: var(--text-m); }
+
+.cell-input::-webkit-outer-spin-button,
+.cell-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cell-input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+select.cell-input { cursor: pointer; }
+
+select.cell-input option {
+  background: var(--card-bg-alt);
+  color: var(--text-h);
+}
+
+/* ── Ajouter une série ── */
+.add-set-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border: 1px dashed rgba(148,163,184,.25);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-s);
+  font-weight: 600;
+  font-size: .83rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.add-set-btn:hover {
+  color: var(--teal);
+  border-color: var(--teal);
+  background: rgba(45,212,191,.06);
+}
+
+.add-set-btn mat-icon { font-size: 17px; width: 17px; height: 17px; }
+
+/* ==========================================================
+   ÉTAT VIDE + IA
+========================================================== */
+.empty-sets {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 26px 16px;
+  margin-bottom: 16px;
+  border: 1px dashed rgba(148,163,184,.18);
+  border-radius: 12px;
+}
+
+.empty-icon {
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  color: var(--text-m);
+  opacity: .7;
+}
+
+.empty-text {
+  margin: 0;
+  color: var(--text-s);
+  font-size: .9rem;
+}
+
+.empty-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.plan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--teal-border);
+  border-radius: 11px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  font-weight: 700;
+  font-size: .87rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: .25s;
+}
+
+.plan-btn:hover {
+  border-color: var(--teal);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(45,212,191,.2);
+}
+
+.plan-btn mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+.add-set-btn.solo { margin-top: 0; }
+
 /* ==========================================================
    1RM CHART CARD
 ========================================================== */
-
 .rm-chart-card {
   background: var(--card-bg-alt);
   border: 1px solid var(--border);
@@ -277,7 +491,6 @@
 /* ==========================================================
    1RM PROGRESS ROW
 ========================================================== */
-
 .rm-progress-row {
   display: flex;
   align-items: center;
@@ -314,14 +527,45 @@
 }
 
 /* ==========================================================
+   ADD EXERCISE
+========================================================== */
+.exercise-actions {
+  display: flex;
+  justify-content: center;
+  padding: 18px;
+  border-top: 1px solid var(--divider);
+}
+
+.add-exercise-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563EB, #06B6D4);
+  color: #fff;
+  font-size: .93rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: .25s;
+}
+
+.add-exercise-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(37,99,235,.35);
+}
+
+.add-exercise-btn mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+/* ==========================================================
    RESPONSIVE
 ========================================================== */
-
 @media (max-width: 700px) {
 
   .exercise-header {
     padding: 14px 16px;
-    flex-wrap: wrap;
   }
 
   .exercise-body {
@@ -330,7 +574,7 @@
 
   .table-header,
   .table-row {
-    grid-template-columns: 24px 1fr 0.7fr 0.7fr 1fr 44px;
+    grid-template-columns: 24px 1fr 0.7fr 0.7fr 1fr 44px 60px;
     gap: 4px;
     padding: 10px 2px;
   }
@@ -341,6 +585,8 @@
   .table-row .col-rpe, .table-row .col-velocity {
     font-size: 12px;
   }
+
+  .hdr-btn, .row-btn { opacity: 1; }   /* toujours visibles au tactile */
 
   .rm-progress-row {
     flex-wrap: wrap;
@@ -354,56 +600,4 @@
   .rm-progress-hint {
     order: 2;
   }
-}
-
-/* =====================================================
-   ACTIONS
-====================================================== */
-
-.exercise-actions{
-
-    display:flex;
-
-    justify-content:center;
-
-    margin-top:24px;
-}
-
-.add-exercise-btn{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    padding:12px 22px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:#EEF6FF;
-
-    color:#2563EB;
-
-    font-size:.95rem;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.25s;
-}
-
-.add-exercise-btn:hover{
-
-    background:#DBEAFE;
-
-    transform:translateY(-2px);
-}
-
-.add-exercise-btn mat-icon{
-
-    font-size:22px;
 }

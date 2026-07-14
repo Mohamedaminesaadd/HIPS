@@ -1,99 +1,78 @@
 <!-- =====================================================
      NUTRITION ALERTS
 ====================================================== -->
-
 <div class="nutrition-alerts">
 
-    <!-- Header -->
+  <!-- Header -->
+  <div class="alerts-header">
+    <div>
+      <h2 class="alerts-title">Carences détectées</h2>
+      <p class="alerts-subtitle">
+        Recommandations nutritionnelles générées par HPIS.
+      </p>
+    </div>
+    <button class="alerts-btn">Voir le rapport</button>
+  </div>
 
-    <div class="alerts-header">
+  <!-- Liste -->
+  <div class="alerts-list" *ngIf="alerts.length; else allGood">
 
-        <div>
+    <div
+      class="alert-card"
+      *ngFor="let alert of alerts"
+      [attr.data-severity]="severity(alert.level)">
 
-            <h2 class="alerts-title">
+      <!-- Icône -->
+      <div class="alert-icon" [ngClass]="severity(alert.level)">
+        <mat-icon>{{ alert.icon }}</mat-icon>
+      </div>
 
-                Carences détectées
+      <!-- Contenu -->
+      <div class="alert-content">
 
-            </h2>
-
-            <p class="alerts-subtitle">
-
-                Recommandations nutritionnelles générées par HPIS.
-
-            </p>
-
+        <div class="alert-top">
+          <h3>{{ alert.title }}</h3>
+          <span class="alert-level" [ngClass]="severity(alert.level)">
+            {{ levelLabel(alert.level) }}
+          </span>
         </div>
 
-        <button class="alerts-btn">
+        <p>{{ alert.description }}</p>
 
-            Voir le rapport
+        <!-- Progression -->
+        <div class="alert-progress">
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              [ngClass]="severity(alert.level)"
+              [style.width.%]="percent(alert)">
+            </div>
+          </div>
+          <span class="progress-val">
+            {{ alert.current }} / {{ alert.target }} {{ alert.unit }}
+          </span>
+        </div>
 
+        <!-- Action -->
+        <button class="alert-action" (click)="onAction(alert)">
+          <mat-icon>auto_awesome</mat-icon>
+          {{ alert.action }}
         </button>
 
+      </div>
     </div>
 
-    <!-- Liste -->
+  </div>
 
-    <div class="alerts-list">
-
-        <div
-            class="alert-card"
-            *ngFor="let alert of alerts">
-
-            <!-- Icône -->
-
-            <div
-                class="alert-icon"
-                [ngClass]="{
-                    'danger': alert.level==='high',
-                    'warning': alert.level==='medium',
-                    'success': alert.level==='low'
-                }">
-
-                <mat-icon>
-
-                    {{ alert.icon }}
-
-                </mat-icon>
-
-            </div>
-
-            <!-- Contenu -->
-
-            <div class="alert-content">
-
-                <div class="alert-top">
-
-                    <h3>
-
-                        {{ alert.title }}
-
-                    </h3>
-
-                    <span
-                        class="alert-level"
-                        [ngClass]="{
-                            'danger': alert.level==='high',
-                            'warning': alert.level==='medium',
-                            'success': alert.level==='low'
-                        }">
-
-                        {{ alert.level }}
-
-                    </span>
-
-                </div>
-
-                <p>
-
-                    {{ alert.description }}
-
-                </p>
-
-            </div>
-
-        </div>
-
+  <!-- État : aucune carence -->
+  <ng-template #allGood>
+    <div class="alerts-empty">
+      <mat-icon class="empty-icon">verified</mat-icon>
+      <p class="empty-text">
+        Aucune carence détectée aujourd'hui. Vos apports sont
+        <strong>dans les objectifs</strong>.
+      </p>
     </div>
+  </ng-template>
 
 </div>

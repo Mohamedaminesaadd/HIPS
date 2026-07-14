@@ -1,64 +1,60 @@
-:host{
-
-    display:block;
-
-    width:100%;
-
-    height:100vh;
+:host {
+    display: block;
+    width: 100%;
+    height: 100vh;
 }
 
 /* ============================= */
 
-.shell{
-
-    display:flex;
-
-    height:100%;
-
-    overflow:hidden;
-
-    background:#0f172a;
+.shell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0f172a;
 }
 
 /* ============================= */
 
-.main{
+.main {
+    flex: 1;
 
-    flex:1;
+    display: flex;
+    flex-direction: column;
 
-    display:flex;
+    min-width: 0;
+    min-height: 0;
 
-    flex-direction:column;
-
-    min-width:0;
-
-    overflow:hidden;
+    overflow: hidden;
 }
 
 /* ============================= */
 
-.topbar{
+.topbar {
+    flex-shrink: 0;
 
-    flex-shrink:0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 
-    position:sticky;
-
-    top:0;
-
-    z-index:100;
-
-    background:#ffffff;
+    background: #ffffff;
 }
 
 /* ============================= */
 
-.content{
+.content {
+    flex: 1;
 
-    flex:1;
+    display: flex;
+    flex-direction: column;
 
-    overflow-y:auto;
+    min-width: 0;
+    min-height: 0;
 
-    padding:24px;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    background:#0f172a;
+    padding: 24px;
+
+    background: #0f172a;
 }
