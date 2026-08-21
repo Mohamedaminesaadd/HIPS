@@ -1,7 +1,8 @@
 """
 Redis connection manager for HPIS.
 
-Redis is used as the hot/current-state data store.
+Redis is initialized during FastAPI application startup
+and closed during FastAPI application shutdown.
 """
 
 import logging
@@ -13,22 +14,18 @@ logger = logging.getLogger(__name__)
 
 
 # ============================================================
-# Redis configuration
+# Configuration
 # ============================================================
 
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0
-
-# Development password.
-#
-# In production, load this from an environment variable.
 REDIS_PASSWORD = "hpis2025"
 
 
 class RedisConnection:
     """
-    Manages the Redis client connection.
+    Manages the Redis client used by the application.
     """
 
     def __init__(
@@ -51,8 +48,14 @@ class RedisConnection:
 
     def connect(self) -> None:
         """
-        Create and test the Redis connection.
+        Create and verify the Redis connection.
         """
+
+        if self.client is not None:
+            logger.warning(
+                "Redis is already connected."
+            )
+            return
 
         logger.info(
             "Connecting to Redis at %s:%s",
@@ -68,7 +71,7 @@ class RedisConnection:
             decode_responses=True,
         )
 
-        # Test authentication + connection
+        # Verify connection and authentication
         self.client.ping()
 
         logger.info(
@@ -81,13 +84,14 @@ class RedisConnection:
 
     def get_client(self):
         """
-        Return the Redis client.
+        Return the active Redis client.
         """
 
         if self.client is None:
             raise RuntimeError(
-                "Redis client is not initialized. "
-                "Call connect() first."
+                "Redis is not connected. "
+                "The FastAPI application must be started "
+                "before using Redis."
             )
 
         return self.client
@@ -101,16 +105,17 @@ class RedisConnection:
         Close Redis connection.
         """
 
-        if self.client is not None:
+        if self.client is None:
+            return
 
-            logger.info(
-                "Closing Redis connection..."
-            )
+        logger.info(
+            "Closing Redis connection..."
+        )
 
-            self.client.close()
+        self.client.close()
 
-            self.client = None
+        self.client = None
 
-            logger.info(
-                "Redis connection closed."
-            )
+        logger.info(
+            "Redis connection closed."
+        )

@@ -1,44 +1,136 @@
+"""
+HPIS FastAPI application.
+"""
+
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from backend.api.router.wearable import router as wearable_router
-from backend.api.router.sensors import router as sensors_router
+from backend.api.router.wearable import (
+    router as wearable_router,
+)
 
-from backend.events.kafka.producer import KafkaProducerService
+from backend.api.router.insights import (
+    router as insights_router,
+)
 
+from backend.database.redis import (
+    RedisConnection,
+)
+
+from backend.services.redis_insight_service import (
+    RedisInsightService,
+)
+
+
+logger = logging.getLogger(__name__)
+
+
+# ============================================================
+# Application lifespan
+# ============================================================
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    FastAPI application lifecycle.
+    Manage HPIS application startup and shutdown.
 
     Startup:
-        Create one reusable Kafka producer.
+        - Create Redis connection
+        - Connect to Redis
+        - Create Redis insight service
+        - Store shared services in app.state
 
     Shutdown:
-        Flush pending Kafka messages and close the producer.
+        - Close Redis connection
     """
 
-    # ========================================================
-    # STARTUP
-    # ========================================================
+    logger.info(
+        "Starting HPIS application..."
+    )
 
-    app.state.kafka_producer = KafkaProducerService()
+    redis_connection = None
 
-    print("Kafka producer initialized.")
+    try:
+        # ====================================================
+        # Redis initialization
+        # ====================================================
 
-    yield
+        redis_connection = RedisConnection()
 
-    # ========================================================
-    # SHUTDOWN
-    # ========================================================
+        redis_connection.connect()
 
-    print("Closing Kafka producer...")
+        logger.info(
+            "Redis connection established."
+        )
 
-    app.state.kafka_producer.close()
+        # ====================================================
+        # Redis insight service
+        # ====================================================
 
-    print("Kafka producer closed.")
+        redis_insight_service = RedisInsightService(
+            redis_connection=redis_connection,
+        )
+
+        # ====================================================
+        # Application state
+        # ====================================================
+
+        app.state.redis_connection = (
+            redis_connection
+        )
+
+        app.state.redis_insight_service = (
+            redis_insight_service
+        )
+
+        logger.info(
+            "Redis insight service initialized."
+        )
+
+        logger.info(
+            "HPIS application startup complete."
+        )
+
+        # ====================================================
+        # Application running
+        # ====================================================
+
+        yield
+
+    except Exception:
+        logger.exception(
+            "HPIS application startup failed."
+        )
+
+        raise
+
+    finally:
+        # ====================================================
+        # Shutdown
+        # ====================================================
+
+        logger.info(
+            "Shutting down HPIS application..."
+        )
+
+        if redis_connection is not None:
+            try:
+                redis_connection.close()
+
+                logger.info(
+                    "Redis connection closed."
+                )
+
+            except Exception:
+                logger.exception(
+                    "Error while closing Redis connection."
+                )
+
+        logger.info(
+            "HPIS application shutdown complete."
+        )
 
 
 # ============================================================
@@ -47,6 +139,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="HPIS Backend",
+    description=(
+        "Human Performance Intelligence System"
+    ),
+    version="1.0.0",
     lifespan=lifespan,
 )
 
@@ -56,6 +152,10 @@ app = FastAPI(
 # ============================================================
 
 
-app.include_router(wearable_router)
+app.include_router(
+    wearable_router,
+)
 
-app.include_router(sensors_router)
+app.include_router(
+    insights_router,
+)

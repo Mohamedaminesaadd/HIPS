@@ -1,36 +1,36 @@
 """
 HPIS Sensor Stream Processor.
 
-Responsibilities:
+Flow:
+
     Kafka hpis.sensors
-        ↓
-    collect recent heart-rate values
-        ↓
-    30-second window
-        ↓
-    calculate average HR
-        ↓
+            ↓
+    collect sensor events
+            ↓
+    30-second event-time windows
+            ↓
+    calculate HR statistics
+            ↓
     Kafka hpis.insights
 
-This service is intentionally independent from:
-    - FastAPI
-    - Cassandra
-    - Redis
-    - RabbitMQ
-    - AI agents
+Current aggregation:
+    - average heart rate
+    - minimum heart rate
+    - maximum heart rate
+    - number of samples
+
+Each user has independent windows.
 """
 
 import logging
 import time
 from collections import defaultdict
-from datetime import datetime, timezone
 from typing import Any
 
 from backend.events.kafka.consumer import KafkaConsumerService
 from backend.events.kafka.producer import KafkaProducerService
 from backend.events.kafka.topics import (
     SENSORS_TOPIC,
-    INSIGHTS_TOPIC,
 )
 
 
@@ -48,12 +48,8 @@ WINDOW_SECONDS = 30
 
 class SensorStreamProcessor:
     """
-    Processes real-time sensor events from Kafka.
-
-    Current processing:
-        - 30-second heart-rate window
-        - average heart rate
-        - publish result to hpis.insights
+    Processes sensor events from Kafka using fixed
+    30-second windows per user.
     """
 
     def __init__(self):
@@ -74,26 +70,25 @@ class SensorStreamProcessor:
         self.producer = KafkaProducerService()
 
         # ----------------------------------------------------
-        # HR windows
+        # Windows
         #
         # Structure:
         #
         # {
-        #     "user123": [
-        #         (timestamp, 72),
-        #         (timestamp, 75),
-        #         (timestamp, 80)
-        #     ]
+        #     "user123": {
+        #         "window_start": 1000,
+        #         "heart_rates": [72, 75, 80]
+        #     }
         # }
         # ----------------------------------------------------
 
-        self.hr_windows: dict[
+        self.user_windows: dict[
             str,
-            list[tuple[float, float]]
-        ] = defaultdict(list)
+            dict[str, Any],
+        ] = {}
 
     # ========================================================
-    # Process one sensor event
+    # Process event
     # ========================================================
 
     def process_event(
@@ -101,43 +96,62 @@ class SensorStreamProcessor:
         event: dict[str, Any],
     ) -> None:
         """
-        Process one sensor event received from Kafka.
+        Process one Kafka sensor event.
         """
 
-        sensor_data = event["value"]
+        sensor_data = event.get("value")
+
+        if not sensor_data:
+            logger.warning(
+                "Received empty sensor event."
+            )
+            return
 
         # ----------------------------------------------------
-        # Extract user ID
+        # User ID
         # ----------------------------------------------------
 
         user_id = sensor_data.get("user_id")
 
         if not user_id:
+
             logger.warning(
-                "Ignoring sensor event without user_id."
+                "Ignoring event without user_id."
             )
+
             return
 
         # ----------------------------------------------------
-        # Extract heart rate
+        # Heart rate
         # ----------------------------------------------------
 
-        heart_rate = sensor_data.get("heart_rate")
+        heart_rate = sensor_data.get(
+            "heart_rate"
+        )
 
         if heart_rate is None:
+
             logger.debug(
-                "Sensor event has no heart_rate: user=%s",
+                "No heart_rate for user=%s",
                 user_id,
             )
+
             return
 
         try:
-            heart_rate = float(heart_rate)
 
-        except (TypeError, ValueError):
+            heart_rate = float(
+                heart_rate
+            )
+
+        except (
+            TypeError,
+            ValueError,
+        ):
 
             logger.warning(
-                "Invalid heart_rate for user=%s: %s",
+                "Invalid heart_rate: "
+                "user=%s value=%s",
                 user_id,
                 heart_rate,
             )
@@ -148,10 +162,135 @@ class SensorStreamProcessor:
         # Validate HR
         # ----------------------------------------------------
 
-        if heart_rate <= 0 or heart_rate > 250:
+        if (
+            heart_rate <= 0
+            or heart_rate > 250
+        ):
 
             logger.warning(
-                "Ignoring unrealistic heart_rate: "
+                "Ignoring unrealistic HR: "
+                "user=%s value=%s",
+                user_id,
+                heart_rate,
+            )
+
+            return
+
+        # ----------------------------------------------------
+        # Event timestamp
+        #
+        # ESP32 timestamp is expected in milliseconds.
+        # ----------------------------------------------------
+
+        timestamp_ms = sensor_data.get(
+            "timestamp"
+        )
+
+        if timestamp_ms is None:
+
+            # Fallback to current server time
+            timestamp_ms = int(
+                time.time() * 1000
+            )
+
+        try:
+
+            timestamp_ms = int(
+                timestamp_ms
+            )
+
+        except (
+            TypeError,
+            ValueError,
+        ):
+
+            logger.warning(
+                "Invalid timestamp: "
+                "user=%s value=%s",
+                user_id,
+                timestamp_ms,
+            )
+
+            return
+
+        # ----------------------------------------------------
+        # Convert timestamp to seconds
+        # ----------------------------------------------------
+
+        event_time = (
+            timestamp_ms / 1000.0
+        )
+
+        # ----------------------------------------------------
+        # Determine window
+        # ----------------------------------------------------
+
+        window_start = (
+            int(
+                event_time
+                // WINDOW_SECONDS
+            )
+            * WINDOW_SECONDS
+        )
+
+        window_end = (
+            window_start
+            + WINDOW_SECONDS
+        )
+
+        # ----------------------------------------------------
+        # Get existing user window
+        # ----------------------------------------------------
+
+        current_window = (
+            self.user_windows.get(
+                user_id
+            )
+        )
+
+        # ----------------------------------------------------
+        # First event for user
+        # ----------------------------------------------------
+
+        if current_window is None:
+
+            self._create_window(
+                user_id=user_id,
+                window_start=window_start,
+                heart_rate=heart_rate,
+            )
+
+            logger.debug(
+                "Created first window: "
+                "user=%s start=%s end=%s",
+                user_id,
+                window_start,
+                window_end,
+            )
+
+            return
+
+        current_window_start = (
+            current_window["window_start"]
+        )
+
+        # ----------------------------------------------------
+        # Same window
+        # ----------------------------------------------------
+
+        if (
+            window_start
+            == current_window_start
+        ):
+
+            current_window[
+                "heart_rates"
+            ].append(
+                heart_rate
+            )
+
+            logger.debug(
+                "Added HR to window: "
                 "user=%s hr=%s",
                 user_id,
                 heart_rate,
@@ -160,113 +299,145 @@ class SensorStreamProcessor:
             return
 
         # ----------------------------------------------------
-        # Use processing time for window management
+        # New window detected
         # ----------------------------------------------------
 
-        current_time = time.time()
+        if window_start > current_window_start:
 
-        # ----------------------------------------------------
-        # Add HR to user's window
-        # ----------------------------------------------------
-
-        self.hr_windows[user_id].append(
-            (
-                current_time,
-                heart_rate,
+            # Finalize previous window
+            self._finalize_window(
+                user_id=user_id,
             )
-        )
 
-        logger.debug(
-            "HR added to window: user=%s hr=%s",
-            user_id,
-            heart_rate,
-        )
+            # Create new window
+            self._create_window(
+                user_id=user_id,
+                window_start=window_start,
+                heart_rate=heart_rate,
+            )
 
-        # ----------------------------------------------------
-        # Remove values outside the 30-second window
-        # ----------------------------------------------------
+            logger.debug(
+                "Started new window: "
+                "user=%s start=%s",
+                user_id,
+                window_start,
+            )
 
-        self._remove_expired_values(
-            user_id=user_id,
-            current_time=current_time,
-        )
-
-        # ----------------------------------------------------
-        # Calculate average
-        # ----------------------------------------------------
-
-        self._calculate_and_publish_hr_average(
-            user_id=user_id,
-        )
-
-    # ========================================================
-    # Remove expired values
-    # ========================================================
-
-    def _remove_expired_values(
-        self,
-        user_id: str,
-        current_time: float,
-    ) -> None:
-        """
-        Remove HR values older than WINDOW_SECONDS.
-        """
-
-        window = self.hr_windows[user_id]
-
-        cutoff_time = (
-            current_time - WINDOW_SECONDS
-        )
-
-        self.hr_windows[user_id] = [
-            (timestamp, heart_rate)
-            for timestamp, heart_rate in window
-            if timestamp >= cutoff_time
-        ]
-
-    # ========================================================
-    # Calculate average
-    # ========================================================
-
-    def _calculate_and_publish_hr_average(
-        self,
-        user_id: str,
-    ) -> None:
-        """
-        Calculate the current average HR and publish
-        an insight to Kafka.
-        """
-
-        window = self.hr_windows[user_id]
-
-        if not window:
             return
 
-        heart_rates = [
-            heart_rate
-            for _, heart_rate in window
+        # ----------------------------------------------------
+        # Late / old event
+        # ----------------------------------------------------
+
+        logger.warning(
+            "Ignoring late event: "
+            "user=%s event_window=%s "
+            "current_window=%s",
+            user_id,
+            window_start,
+            current_window_start,
+        )
+
+    # ========================================================
+    # Create window
+    # ========================================================
+
+    def _create_window(
+        self,
+        user_id: str,
+        window_start: int,
+        heart_rate: float,
+    ) -> None:
+        """
+        Create a new window for a user.
+        """
+
+        self.user_windows[user_id] = {
+            "window_start": window_start,
+            "heart_rates": [
+                heart_rate
+            ],
+        }
+
+    # ========================================================
+    # Finalize window
+    # ========================================================
+
+    def _finalize_window(
+        self,
+        user_id: str,
+    ) -> None:
+        """
+        Calculate statistics for a completed window
+        and publish an insight.
+        """
+
+        window = self.user_windows.get(
+            user_id
+        )
+
+        if window is None:
+            return
+
+        heart_rates = window[
+            "heart_rates"
         ]
 
+        if not heart_rates:
+            return
+
+        # ----------------------------------------------------
+        # Statistics
+        # ----------------------------------------------------
+
         average_hr = (
-            sum(heart_rates) / len(heart_rates)
+            sum(heart_rates)
+            / len(heart_rates)
+        )
+
+        minimum_hr = min(
+            heart_rates
+        )
+
+        maximum_hr = max(
+            heart_rates
+        )
+
+        window_start = (
+            window["window_start"]
+        )
+
+        window_end = (
+            window_start
+            + WINDOW_SECONDS
         )
 
         # ----------------------------------------------------
-        # Current timestamp
-        # ----------------------------------------------------
-
-        timestamp_ms = int(
-            time.time() * 1000
-        )
-
-        # ----------------------------------------------------
-        # Build insight
+        # Insight
         # ----------------------------------------------------
 
         insight = {
             "user_id": user_id,
-            "timestamp": timestamp_ms,
-            "source": "hr_stream_processor",
+
+            "timestamp": int(
+                time.time() * 1000
+            ),
+
+            "source": (
+                "hr_stream_processor"
+            ),
+
+            "window": {
+                "start": (
+                    window_start * 1000
+                ),
+                "end": (
+                    window_end * 1000
+                ),
+                "duration_seconds": (
+                    WINDOW_SECONDS
+                ),
+            },
 
             "result": {
                 "average_heart_rate": round(
@@ -274,11 +445,19 @@ class SensorStreamProcessor:
                     2,
                 ),
 
+                "minimum_heart_rate": round(
+                    minimum_hr,
+                    2,
+                ),
+
+                "maximum_heart_rate": round(
+                    maximum_hr,
+                    2,
+                ),
+
                 "samples": len(
                     heart_rates
                 ),
-
-                "window_seconds": WINDOW_SECONDS,
             },
         }
 
@@ -292,12 +471,30 @@ class SensorStreamProcessor:
         )
 
         logger.info(
-            "HR insight published: "
-            "user=%s average_hr=%.2f samples=%d",
+            "Completed HR window: "
+            "user=%s "
+            "start=%s "
+            "end=%s "
+            "samples=%d "
+            "average=%.2f "
+            "min=%.2f "
+            "max=%.2f",
             user_id,
-            average_hr,
+            window_start,
+            window_end,
             len(heart_rates),
+            average_hr,
+            minimum_hr,
+            maximum_hr,
         )
+
+        # ----------------------------------------------------
+        # Remove completed window
+        # ----------------------------------------------------
+
+        del self.user_windows[
+            user_id
+        ]
 
     # ========================================================
     # Run
@@ -313,13 +510,13 @@ class SensorStreamProcessor:
         )
 
         logger.info(
-            "Kafka input topic: %s",
+            "Input topic: %s",
             SENSORS_TOPIC,
         )
 
         logger.info(
-            "Kafka output topic: %s",
-            INSIGHTS_TOPIC,
+            "Consumer group: %s",
+            KAFKA_GROUP_ID,
         )
 
         logger.info(
@@ -330,7 +527,9 @@ class SensorStreamProcessor:
         try:
 
             self.consumer.run(
-                message_handler=self.process_event,
+                message_handler=(
+                    self.process_event
+                ),
             )
 
         except KeyboardInterrupt:
@@ -355,6 +554,16 @@ class SensorStreamProcessor:
         logger.info(
             "Closing sensor stream processor..."
         )
+
+        # ----------------------------------------------------
+        # Important:
+        #
+        # We intentionally do not finalize incomplete
+        # windows here yet.
+        #
+        # A production implementation would persist
+        # window state or handle graceful finalization.
+        # ----------------------------------------------------
 
         self.producer.close()
 
