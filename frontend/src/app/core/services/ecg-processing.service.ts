@@ -1,12 +1,17 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import {
   BehaviorSubject,
+  finalize,
   Observable,
   Subject,
   takeUntil
 } from 'rxjs';
 
 import { Esp32WebsocketService } from './esp32-websocket.service';
+import { EcgApiService } from './ecg-api.service';
+import { WearableDataService } from './wearable-data.service';
+import { ECG_TRANSPORT_SUBJECT_ID } from '../config/api.config';
+import { EcgAnalysisRequest } from '../models/ecg-analysis.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +27,9 @@ export class EcgProcessingService implements OnDestroy {
   /**
    * Number of ECG samples displayed.
    *
-   * 750 samples / 250 Hz = 3 seconds
+   * 1250 samples / 250 Hz = 5 seconds
    */
-  private readonly DISPLAY_BUFFER_SIZE = 750;
+  private readonly DISPLAY_BUFFER_SIZE = 1250;
 
   /**
    * Number of ECG samples used for HR calculation.
@@ -32,6 +37,20 @@ export class EcgProcessingService implements OnDestroy {
    * 2000 / 250 Hz = 8 seconds
    */
   private readonly ANALYSIS_BUFFER_SIZE = 2000;
+
+  /** Raw 30-second window used only for backend Model A transport. */
+  private readonly BACKEND_WINDOW_SIZE =
+    this.SAMPLE_RATE * 30;
+
+  /** Keep 20 seconds after each upload; the next window starts 10 seconds later. */
+  private readonly BACKEND_WINDOW_STRIDE =
+    this.SAMPLE_RATE * 10;
+
+  /** Bounds memory if the API is slow or unavailable. */
+  private readonly BACKEND_MAX_BUFFER_SIZE =
+    this.BACKEND_WINDOW_SIZE + this.BACKEND_WINDOW_STRIDE;
+
+  private readonly MINIMUM_UPLOAD_QUALITY = 50;
 
   /**
    * Minimum distance between two R peaks.
@@ -108,12 +127,23 @@ export class EcgProcessingService implements OnDestroy {
 
   private analysisBuffer: number[] = [];
 
+  /** This deliberately remains separate from the display and HR buffers. */
+  private backendTransportBuffer: number[] = [];
+
+  private backendRequestInFlight = false;
+
+  private destroyed = false;
+
+  private readonly subjectId = inject(ECG_TRANSPORT_SUBJECT_ID);
+
   // ============================================================
   // CONSTRUCTOR
   // ============================================================
 
   constructor(
-    private readonly esp32Service: Esp32WebsocketService
+    private readonly esp32Service: Esp32WebsocketService,
+    private readonly ecgApiService: EcgApiService,
+    private readonly wearableDataService: WearableDataService,
   ) {
 
     this.subscribeToEcg();
@@ -153,16 +183,24 @@ export class EcgProcessingService implements OnDestroy {
     samples: number[]
   ): void {
 
-    if (!samples || samples.length === 0) {
+    const validSamples = samples?.filter(Number.isFinite) ?? [];
+
+    if (validSamples.length === 0) {
+
+      console.warn('[ECG] Ignoring an empty or invalid ECG chunk.');
 
       return;
     }
+
+    // Keep raw data for the backend separately; local UI and HR processing
+    // remain on their existing short, lightweight buffers.
+    this.collectBackendWindow(validSamples);
 
     // ----------------------------------------------------------
     // 1. Store raw ECG
     // ----------------------------------------------------------
 
-    this.rawBuffer.push(...samples);
+    this.rawBuffer.push(...validSamples);
 
     this.limitBuffer(
       this.rawBuffer,
@@ -178,7 +216,7 @@ export class EcgProcessingService implements OnDestroy {
     // ----------------------------------------------------------
 
     const filteredSamples =
-      this.filterSamples(samples);
+      this.filterSamples(validSamples);
 
     // ----------------------------------------------------------
     // 3. Store filtered ECG
@@ -215,6 +253,117 @@ export class EcgProcessingService implements OnDestroy {
     // ----------------------------------------------------------
 
     this.detectRPeaks();
+  }
+
+  // ============================================================
+  // BACKEND ECG TRANSPORT
+  // ============================================================
+
+  private collectBackendWindow(samples: number[]): void {
+
+    this.backendTransportBuffer.push(...samples);
+
+    this.limitBuffer(
+      this.backendTransportBuffer,
+      this.BACKEND_MAX_BUFFER_SIZE,
+    );
+
+    this.trySendBackendWindow();
+  }
+
+  private trySendBackendWindow(): void {
+
+    if (
+      this.destroyed ||
+      this.backendRequestInFlight ||
+      this.backendTransportBuffer.length < this.BACKEND_WINDOW_SIZE
+    ) {
+
+      return;
+    }
+
+    const ecgMetadata = this.wearableDataService.getCurrentECGData();
+
+    if (ecgMetadata?.lead_off) {
+      console.warn('[ECG] Backend upload skipped: ECG lead is disconnected.');
+      this.advanceBackendWindow();
+      return;
+    }
+
+    if (this.hasPoorSignal(ecgMetadata?.signal_quality ?? null)) {
+      console.warn('[ECG] Backend upload skipped: ECG signal quality is poor.');
+      this.advanceBackendWindow();
+      return;
+    }
+
+    const payload = this.createBackendPayload(
+      this.backendTransportBuffer.slice(0, this.BACKEND_WINDOW_SIZE),
+    );
+
+    this.advanceBackendWindow();
+    this.backendRequestInFlight = true;
+
+    this.ecgApiService.analyzeEcg(payload)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.backendRequestInFlight = false;
+          this.trySendBackendWindow();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          console.info(
+            `[ECG] Backend accepted ${response.ecg_samples} raw samples ` +
+            `for ${response.subject_id}.`,
+          );
+        },
+        error: (error) => {
+          // Keep the real-time UI independent from API availability.
+          console.error('[ECG] Backend analysis request failed:', error);
+        },
+      });
+  }
+
+  private createBackendPayload(samples: number[]): EcgAnalysisRequest {
+
+    const packet = this.wearableDataService.getCurrentPacket();
+    const ecgMetadata = this.wearableDataService.getCurrentECGData();
+
+    return {
+      subject_id: this.subjectId,
+      timestamp: packet?.timestamp_ms ?? Date.now(),
+      ecg: {
+        fs: this.SAMPLE_RATE,
+        samples,
+      },
+      vitals: {
+        hr: this.heartRateSubject.value ?? this.wearableDataService.getCurrentHeartRate(),
+        spo2: this.wearableDataService.getCurrentSpO2(),
+        temperature: this.wearableDataService.getCurrentTemperature(),
+      },
+      quality: {
+        ecg_quality: ecgMetadata?.signal_quality ?? null,
+        noise: ecgMetadata?.noise_level ?? null,
+        lead_off: ecgMetadata?.lead_off ?? false,
+      },
+    };
+  }
+
+  private advanceBackendWindow(): void {
+
+    this.backendTransportBuffer.splice(0, this.BACKEND_WINDOW_STRIDE);
+  }
+
+  private hasPoorSignal(quality: number | null): boolean {
+
+    if (quality === null || !Number.isFinite(quality)) {
+      return false;
+    }
+
+    const percent = quality <= 1 ? quality * 100 : quality;
+
+    return percent < this.MINIMUM_UPLOAD_QUALITY;
   }
 
   // ============================================================
@@ -555,6 +704,8 @@ export class EcgProcessingService implements OnDestroy {
 
     this.analysisBuffer = [];
 
+    this.backendTransportBuffer = [];
+
     this.filterInitialized = false;
 
     this.filterPreviousInput = 0;
@@ -599,6 +750,8 @@ export class EcgProcessingService implements OnDestroy {
   // ============================================================
 
   ngOnDestroy(): void {
+
+    this.destroyed = true;
 
     this.destroy$.next();
 

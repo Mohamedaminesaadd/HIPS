@@ -3,9 +3,15 @@ HPIS FastAPI application.
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from backend.api.router.ecg import (
+    router as ecg_router,
+)
 
 from backend.api.router.wearable import (
     router as wearable_router,
@@ -147,6 +153,22 @@ app = FastAPI(
 )
 
 
+# The Angular development server is a separate browser origin. Extra origins
+# can be supplied as a comma-separated HPIS_CORS_ORIGINS environment variable.
+cors_origins = os.getenv(
+    "HPIS_CORS_ORIGINS",
+    "http://localhost:4200,http://127.0.0.1:4200",
+).split(",")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin.strip() for origin in cors_origins if origin.strip()],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 # ============================================================
 # Routers
 # ============================================================
@@ -158,4 +180,8 @@ app.include_router(
 
 app.include_router(
     insights_router,
+)
+
+app.include_router(
+    ecg_router,
 )

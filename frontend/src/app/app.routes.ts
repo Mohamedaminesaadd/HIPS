@@ -12,6 +12,7 @@ import { MealLog } from './shared/meal-log/meal-log';
 import { NutritionAlerts } from './shared/nutrition-alerts/nutrition-alerts';
 import { Nutrition } from './features/nutrition/nutrition';
 import { Training } from './features/training/training';
+import { Cardiac } from './features/cardiac/cardiac';
 
 
 
@@ -41,6 +42,11 @@ export const routes: Routes = [
       {
         path: 'nutrition',
         component: Nutrition
+      },
+
+      {
+        path: 'heart',
+        component: Cardiac
       },
 
       {

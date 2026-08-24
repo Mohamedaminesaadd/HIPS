@@ -1,1 +1,102 @@
-<p>cardiac works!</p>
+<section class="heart-page" aria-labelledby="heart-title">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Wearable telemetry</p>
+      <h1 id="heart-title">Heart / ECG</h1>
+      <p class="subtitle">Real-time cardiac monitoring from your connected wearable.</p>
+    </div>
+    <div class="connection-status" [class.connected]="connected" [class.connecting]="connecting && !connectionError">
+      <span class="status-dot"></span>
+      {{ connectionLabel }}
+    </div>
+  </header>
+
+  <section class="ecg-card" aria-labelledby="ecg-monitor-title">
+    <div class="card-heading">
+      <div>
+        <p class="eyebrow">Live signal</p>
+        <h2 id="ecg-monitor-title">ECG monitor</h2>
+      </div>
+      <span class="sample-rate">Filtered · {{ sampleRate }} Hz</span>
+    </div>
+
+    <div class="chart-wrap" [class.unavailable]="leadOff">
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [colors]="chartOptions.colors"
+        [stroke]="chartOptions.stroke"
+        [grid]="chartOptions.grid"
+        [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis"
+        [tooltip]="chartOptions.tooltip"
+      ></apx-chart>
+
+      @if (!hasEcgData || leadOff) {
+        <div class="chart-state">
+          <mat-icon>{{ leadOff ? 'warning_amber' : 'hourglass_empty' }}</mat-icon>
+          <span>{{ leadOff ? 'ECG electrodes disconnected' : 'Waiting for ECG data...' }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="metrics-grid" aria-label="Cardiac metrics">
+    <article class="metric-card heart-rate-card">
+      <div class="metric-heading"><mat-icon>favorite</mat-icon><span>Heart rate</span></div>
+      @if (heartRate !== null) {
+        <div class="metric-value">{{ heartRate | number:'1.0-1' }} <small>BPM</small></div>
+        <p class="metric-detail">{{ heartRateStatus }}</p>
+      } @else {
+        <div class="metric-empty">Waiting for heart rate…</div>
+      }
+    </article>
+
+    <article class="metric-card">
+      <div class="metric-heading"><mat-icon>graphic_eq</mat-icon><span>ECG quality</span></div>
+      @if (qualityPercent !== null) {
+        <div class="metric-value">{{ qualityPercent }}<small>%</small></div>
+        <div class="progress-track"><span [style.width.%]="qualityPercent"></span></div>
+      } @else {
+        <div class="metric-empty">Waiting for signal…</div>
+      }
+      <p class="metric-detail" [class.warning]="leadOff || qualityLabel === 'Poor'">
+        {{ leadOff ? 'Lead disconnected' : qualityLabel }}
+      </p>
+    </article>
+
+    <article class="metric-card ai-summary-card">
+      <div class="metric-heading"><mat-icon>neurology</mat-icon><span>AI status</span></div>
+      @if (analysisResult) {
+        <div class="ai-state">{{ analysisResult.cardiacState }}</div>
+        <p class="metric-detail">{{ analysisResult.confidence | number:'1.0-0' }}% confidence</p>
+      } @else {
+        <div class="metric-empty">Waiting for analysis…</div>
+        <p class="metric-detail">AI analysis unavailable</p>
+      }
+    </article>
+  </section>
+
+  <section class="analysis-card" aria-labelledby="analysis-title">
+    <div class="card-heading">
+      <div>
+        <p class="eyebrow">Model output</p>
+        <h2 id="analysis-title">AI cardiac analysis</h2>
+      </div>
+      <mat-icon>auto_awesome</mat-icon>
+    </div>
+
+    @if (analysisResult) {
+      <div class="analysis-result">
+        <strong>{{ analysisResult.cardiacState }}</strong>
+        <div class="analysis-progress"><span [style.width.%]="analysisResult.confidence"></span></div>
+        <p>Confidence {{ analysisResult.confidence | number:'1.0-0' }}% · {{ analysisResult.abnormality || 'No abnormal pattern reported' }}</p>
+      </div>
+    } @else {
+      <div class="analysis-waiting">
+        <mat-icon>schedule</mat-icon>
+        <div><strong>AI analysis</strong><p>Waiting for analysis from the cardiac model.</p></div>
+      </div>
+    }
+  </section>
+</section>
