@@ -1,0 +1,8 @@
+              precision    recall  f1-score   support
+
+  Non-Stress     0.9609    0.9467    0.9538      6417
+      Stress     0.8240    0.8663    0.8446      1848
+
+    accuracy                         0.9287      8265
+   macro avg     0.8925    0.9065    0.8992      8265
+weighted avg     0.9303    0.9287    0.9294      8265
